@@ -30,3 +30,6 @@ pip-log.txt
 *bootstrap*.js
 *bootstrap*.css
 *d3.*.js
+
+# Install this using 'manage.py collectstatic'
+static/admin

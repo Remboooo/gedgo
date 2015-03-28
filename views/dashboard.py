@@ -134,7 +134,7 @@ def _reset_tracking():
 
 def _page_view_stats():
     if REDIS is None:
-        return {}
+        return (None, None, None)
 
     user_keys = REDIS.keys('gedgo_user_*_page_view_count')
     users = User.objects.filter(
