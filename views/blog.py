@@ -8,7 +8,6 @@ from gedgo.views.util import render, process_comments
 from datetime import datetime
 
 
-@login_required
 def blog(request, year, month):
     "Blog front page - listing posts by creation date."
     posts = BlogPost.objects.all().order_by("-created")
@@ -41,12 +40,10 @@ def blog(request, year, month):
     )
 
 
-@login_required
 def blog_list(request):
     return blog(request, None, None)
 
 
-@login_required
 def blogpost(request, post_id):
     "Single post."
 

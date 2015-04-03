@@ -1,26 +1,162 @@
-/* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  background-color: #7EB5D6;
+  min-height: 100%;
 }
 
-.navbar-brand {
-  color: #fff !important;
-}
-.container {
-  max-width: 780px;
+body:after {
+  display: none;
+  /* Preload any not immediately needed images */
+  content: url(/static/img/cog-blue.svg);
 }
 
-.main {
-  max-width: 750px;
-  padding-top: 65px;
-  background-color: #FFFBFF;
-  border-style: solid;
-  border-color: #6E6E6E;
-  border-width: 1px;
+html, body, input {
+  padding: 0;
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 10pt;
+  background-size: cover;
 }
-.section {
-  margin-top: 35px;
+
+
+/**********\
+ MAIN TITLE 
+\**********/
+
+
+#topbar {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 75px;
 }
+
+#title {
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 300px;
+  background: url(/static/img/tree_extended.jpg) no-repeat;
+  background-position: right 65%;
+  background-size: cover;
+}
+
+#title .main {
+  display: block;
+  font-size: 120pt;
+  font-family: 'Rochester', cursive;
+  padding: 90px 0 0 75px;
+  margin: 0;
+  font-weight: normal;
+}
+
+@media (max-width: 768px) {
+  #title {
+    height: 150px;
+  }
+
+  #title .main {
+    font-size: 75pt;
+    padding: 15px 0 0 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  #title {
+    height: 100px;
+  }
+
+  #title .main {
+    font-size: 50pt;
+    padding: 5px 0 0 10px;
+  }
+}
+
+
+
+/*********************\
+ MENU BAR / SEARCH BOX  
+\*********************/
+
+a.config-icon {
+  display: inline-block;
+  background-image: url(/static/img/cog.svg);
+  background-size: 20px 20px;
+  background-position: 20% 75%;
+  background-repeat: no-repeat;
+  width: 50px;
+}
+
+a:hover.config-icon {
+  background-image: url(/static/img/cog-blue.svg);
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button {
+  display: none; 
+}
+
+input[type=search] {
+  background: url(/static/img/search.svg) no-repeat 5px center;
+  background-size: 25px;
+  margin-top: 7px;
+  padding: 9px 10px 9px 32px;
+  width: 55px;
+  border: none;
+
+  -webkit-appearance: textfield;
+  -webkit-box-sizing: content-box;
+  font-family: inherit;
+  font-size: 100%;
+  outline: none;
+  
+  -webkit-border-radius: 10em;
+  -moz-border-radius: 10em;
+  border-radius: 10em;
+  
+  -webkit-transition: all .2s;
+  -moz-transition: all .2s;
+  transition: all .2s;
+}
+
+input[type=search]:focus {
+  width: 130px;
+  border: 1px solid #a0a0a0;
+}
+
+
+input[type=search] {
+  width: 15px;
+  padding-left: 10px;
+  color: transparent;
+  cursor: pointer;
+}
+input[type=search]:hover {
+  background-color: #fff;
+}
+input[type=search]:focus {
+  width: 130px;
+  padding-left: 32px;
+  color: #000;
+  background-color: #fff;
+  cursor: auto;
+}
+input[type=search]:-moz-placeholder {
+  color: transparent;
+}
+input[type=search]::-webkit-input-placeholder {
+  color: transparent;
+}
+
+
+/**********\
+    GEDGO
+\**********/
+
 .sidebar-thumb {
   width: 105px;
   margin-bottom: 10px;

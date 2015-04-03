@@ -5,7 +5,6 @@ from gedgo.models import Gedcom, Person, BlogPost, Documentary
 from gedgo.views.util import render, process_comments
 
 
-@login_required
 def gedcom(request, gedcom_id):
     g = get_object_or_404(Gedcom, id=gedcom_id)
     post = BlogPost.objects.all().order_by("-created").first()
@@ -27,7 +26,6 @@ def gedcom(request, gedcom_id):
     )
 
 
-@login_required
 def person(request, gedcom_id, person_id):
     g = get_object_or_404(Gedcom, id=gedcom_id)
     p = get_object_or_404(Person, gedcom=g, pointer=person_id)
@@ -48,7 +46,6 @@ def person(request, gedcom_id, person_id):
     return render(request, 'person.html', context)
 
 
-@login_required
 def documentaries(request):
     documentaries = Documentary.objects.all().order_by('-last_updated')
 

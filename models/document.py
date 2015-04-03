@@ -1,6 +1,6 @@
 from django.db import models
 from os import path
-
+import settings
 
 class Document(models.Model):
     class Meta:
