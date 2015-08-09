@@ -5,15 +5,15 @@ d3.json("/gedgo/" + gid + "/pedigree/" + pid + "/", function(treeData) {
 
   // Create a svg canvas
   var vis = d3.select("#pedigree-tree").append("svg:svg")
-    .attr("width", 480)
-    .attr("height", 600)
+    .attr("width", 500)
+    .attr("height", 1000)
     .append("svg:g")
     .attr("transform", "translate(40, -100)");
 
   // Create a tree "canvas"
   var gid = treeData.gid;
   var tree = d3.layout.tree()
-    .size([800,230]);
+    .size([800,100]);
 
   var diagonal = d3.svg.diagonal()
     // change x and y (for the left to right tree)

@@ -11,49 +11,52 @@
 
 
 {% block content %}
-<h2 class="welcome">Welcome!</h2>
+<div id="primarycontent">
+  <h2>Welcome!</h2>
 
-{% if gedcom.description %}
-  {{ gedcom.description|safe|linebreaks }}
-  <hr />
-{% endif %}
+  {% if gedcom.description %}
+    {{ gedcom.description|safe|linebreaks }}
+  {% endif %}
 
-{% if post %}
-  <h3>Latest Blog Post</h3>
-  <b><a href="/gedgo/blog/post/{{ post.id }}">{{ post.title }}</a></b><br>
-  {{ post.body|safe|linebreaks|truncatewords:50 }}
-  <p>
-    <a href="/gedgo/blog/post/{{ post.id }}">Read more</a>, or see <a href="/gedgo/blog/">all posts</a>.
-  </p>
-  <hr />
-{% endif %}
+  {% if gedcom.file_name or gedcom.last_update %}
+    {% if gedcom.last_updated %}
+      <div class="pod-title">Last Updated:</div>{{ gedcom.last_updated }}
+    {% endif %}
+    <br><br>
+    {% if user.is_staff %}
+      <a href="/admin/gedgo/gedcom/{{ gedcom.id }}/">Edit this page</a>
+    {% endif %}
+  {% endif %}
+  {% if user.is_authenticated %}
+    {% include "comment_form.html" %}
+  {% endif %}
+</div>
 
-{% for family in gedcom.key_families.all %}
-  <br />
-  <h3>The {{ family.family_name }} Family</h3>
-  <div class="row">
-  {% for somebody in family.spouses %}
-    <div class="col-sm-6">
-      {% include "person-card.html" %}
-    </div>
-  {% endfor %}
+<div id="rightsidecontent">
+  {% if post %}
+  <div class="latestpost">
+    <h3>Blog</h3>
+    <b><a href="/gedgo/blog/post/{{ post.id }}">{{ post.title }}</a></b><br>
+    {{ post.body|safe|linebreaks|truncatewords:50 }}
+    <p>
+      <a href="/gedgo/blog/post/{{ post.id }}">Read more</a>, or see <a href="/gedgo/blog/">all posts</a>.
+    </p>
   </div>
-  <hr />
-{% endfor %}
-
-
-{% if gedcom.file_name or gedcom.last_update %}
-  {% if gedcom.last_updated %}
-    <div class="pod-title">Last Updated:</div>{{ gedcom.last_updated }}
   {% endif %}
-  <br><br>
-  {% if user.is_staff %}
-    <a href="/admin/gedgo/gedcom/{{ gedcom.id }}/">Edit this page</a>
-  {% endif %}
-  <hr />
-{% endif %}
 
-{% include "comment_form.html" %}
+  {% for family in gedcom.key_families.all %}
+  <div class="family">
+    <h3>{{ family.family_name }}</h3>
+    <div class="row">
+    {% for somebody in family.spouses %}
+      <div class="col-sm-6">
+        {% include "person-card.html" %}
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
 
 {% endblock %}
 

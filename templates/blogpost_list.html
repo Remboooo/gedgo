@@ -6,30 +6,33 @@
 
 {% block leftsidebar %}
   <h4>Archive</h4>
-  {% for month in months %}
-    <a href="/gedgo/blog/{{ month.0 }}/{{ month.1 }}/">{{ month.2 }} {{ month.0 }}</a> <br />
-  {% endfor %}
-
+  <ul class="archivelist">
+    <li><a href="/gedgo/blog/">All</a></li>
+    {% for month in months %}
+      <li><a href="/gedgo/blog/{{ month.0 }}/{{ month.1 }}/">{{ month.2 }} {{ month.0 }}</a></li>
+    {% endfor %}
+  </ul>
   {% if user.is_staff %}
-    <br /><br />
-    <a href="/admin/gedgo/blogpost/add/"><span class="glyphicon glyphicon-plus"></span> Add new post</a>
+  <p class="admin">
+    <a href="/admin/gedgo/blogpost/add/" class="add">Add new post</a>
+  </p>
   {% endif %}
+
 {% endblock %}
 
 {% block content %}
+  <div id="primarycontent">
     <!-- Posts  -->
     {% if posts.object_list %}
         {% for post in posts.object_list %}
-        <div class="pod">
-            <a href="/gedgo/blog/post/{{ post.id }}"><h2>{{ post.title }}</h2></a>
-            <div class="body">{{ post.body|linebreaks|truncatewords:200 }}</div>
-            <div class="time">{{ post.created }}</div>
-        </div>
+          <a href="/gedgo/blog/post/{{ post.id }}"><h2>{{ post.title }}</h2></a>
+          <p class="body">{{ post.body|linebreaks|truncatewords:200 }}</p>
+          <p class="time">{{ post.created }}</p>
         {% endfor %}
     {% else %}
-        <div class="pod">
+        <p class="insignificant">
             No blog posts written yet.
-        </div>
+        </p>
     {% endif %}
         
     <!-- Next/Prev page links  -->
@@ -41,7 +44,7 @@
         {% endif %}
 
         <span class="current">
-            &nbsp;Page {{ posts.number }} of {{ posts.paginator.num_pages }}&nbsp;
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}
         </span> {# post list #}
 
         {% if posts.has_next %}
@@ -49,5 +52,6 @@
         {% endif %} 
       </div>
     </div>
-  {% endif %}
+    {% endif %}
+  </div>
 {% endblock %}

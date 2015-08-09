@@ -13,7 +13,7 @@ class Event(models.Model):
     date_format = models.CharField(null=True, max_length=10)
     date_approxQ = models.BooleanField('Date is approximate')
     gedcom = models.ForeignKey('Gedcom')
-    place = models.CharField(max_length=50)
+    place = models.CharField(max_length=256)
 
     # Breaks strict MVC conventions.
     # Hack around python datetime's 1900 limitation.

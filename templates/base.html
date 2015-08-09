@@ -1,3 +1,4 @@
+{% url 'gedcom' 1 as home_url %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -40,7 +41,6 @@
           <li {% block blogactive %}{% endblock %}><a href="/gedgo/blog/">Blog</a></li>
         {% endif %}
 
-        {% url 'gedcom' 1 as home_url %}
         <li {% if request.path == home_url %}class="active"{% endif %}><a href="{% url 'gedcom' 1 %}">Home</a></li>
 
 
@@ -54,32 +54,28 @@
 
 
 
-    <div id="title">
+    <div id="{%if request.path == home_url %}title{% else %}smalltitle{% endif %}">
       <h1 class="main">van Lakwijk</h1>
     </div>
 
-    <div class="main container">
-      {% if messages %}
-        {% for message in messages %}
-        <br />
-        <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          {{ message }}
-        </div>
-        {% endfor %}
-      {% endif %}
-      <div class="row">
-        <div class="col-sm-4 hidden-xs">
-          {% block leftsidebar %}{% endblock %}
-        </div>
-        <div class="col-sm-8">
-          {% block content %}{% endblock %}<br>&nbsp;
-        </div>
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <div id="main">
+      <div id="content">
+        {% block content %}{% endblock %}
+      </div>
+      <div id="sidebar">
+        {% block leftsidebar %}{% endblock %}
       </div>
     </div>
+
   </body>
-  <script src="https://code.jquery.com/jquery-latest.js"></script>
-  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-  <script>$('#help-popover').popover({html: true})</script>
   {% block javascript %}{% endblock %}
 </html>

@@ -16,7 +16,8 @@ class Documentary(models.Model):
     thumb = models.ForeignKey(
         'Document',
         related_name='documentaries_thumb',
-        blank=True
+        null=True,
+        blank=True,
     )
     tagged_people = models.ManyToManyField(
         'Person',

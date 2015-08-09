@@ -9,222 +9,184 @@
       </a>
     {% endif %}
 {% endfor %}
+<h3>Pedigree Chart</h3>
+<div id="pedigree-tree" data-gid="{{gedcom.id}}" data-pid="{{person.pointer}}"></div>
 {% endblock %}
 
 
 
 {% block content %}
-<div class="row">
-    <div class="col-xs-5">
-      <a href="{% if person.photos %}{{ MEDIA_URL }}{{ person.key_photo }}{% else %}#{% endif %}">
-          <img src="{% if person.photos %}{{ MEDIA_URL }}thumbs/{{ person.key_photo }}{% else %}{{ STATIC_URL }}img/generic_person.gif{% endif %}" class="thumb img-rounded">
-      </a>
-    </div>
-    <div class="col-xs-7">
-      <h2>{{ person.full_name }}</h2><h3>({{ person.year_range }})</h3></td>
-    </div>
-</div>
+<div id="primarycontent">
+  <a href="{% if person.photos %}{{ MEDIA_URL }}{{ person.key_photo }}{% else %}#{% endif %}">
+      <img src="{% if person.photos %}{{ MEDIA_URL }}thumbs/{{ person.key_photo }}{% else %}{{ STATIC_URL }}img/generic_person.gif{% endif %}" class="thumb img-rounded">
+  </a>
+  <h2>{{ person.full_name }}</h2><h3>({{ person.year_range }})</h3></td>
 
-<!-- Basic information pod -->
-<div class="section">
-<h3>Biographical Information:</h3>
-  {% if person.birth or person.death or person.education or person.religion %}
-  <div class="row">
-    <div class="col-sm-6">
-      {% if person.birth.date %}
-        <strong>Born:</strong> {{ person.birth.date_string }} {% if person.birth.date_approxQ %}(approximate){% endif %}
-        <br />
-      {% endif %}
-      {% if person.birth.place %}
-        <strong>Birthplace:</strong> {{ person.birth.place }}
-        <br />
-      {% endif %}
-      {% if person.death.date %}
-        <strong>Died:</strong> {{ person.death.date_string }} {% if person.death.date_approxQ %}(approximate){% endif %}
-        <br />
-      {% endif %}
-      {% if person.death.place %}
-        <strong>Deathplace:</strong> {{ person.death.place }}
-        <br />
-      {% endif %}
-    </div>
-    <div class="col-sm-6">
-      {% if person.education %}
-        <strong>Education:</strong> {{ person.education_delimited|linebreaksbr }}
-        <br />
-      {% endif %}
-      {% if person.religion %}
-        <strong>Religion:</strong> {{ person.religion }}
-        <br />
-      {% endif %}
-    </div>
-  </div>
-  <hr />
-  {% endif %}
+  <!-- Basic information pod -->
+  <h3>Biographical Information</h3>
+  <p>
+    {% if person.birth or person.death or person.education or person.religion %}
+        {% if person.birth.date %}
+          <strong>Born:</strong> {{ person.birth.date_string }} {% if person.birth.date_approxQ %}(approximate){% endif %}
+          <br />
+        {% endif %}
+        {% if person.birth.place %}
+          <strong>Birthplace:</strong> {{ person.birth.place }}
+          <br />
+        {% endif %}
+        {% if person.death.date %}
+          <strong>Died:</strong> {{ person.death.date_string }} {% if person.death.date_approxQ %}(approximate){% endif %}
+          <br />
+        {% endif %}
+        {% if person.death.place %}
+          <strong>Deathplace:</strong> {{ person.death.place }}
+          <br />
+        {% endif %}
+        {% if person.education %}
+          <strong>Education:</strong> {{ person.education_delimited|linebreaksbr }}
+          <br />
+        {% endif %}
+        {% if person.religion %}
+          <strong>Religion:</strong> {{ person.religion }}
+          <br />
+        {% endif %}
+    {% endif %}
 
-  <!-- Born-to -->
-  {% if person.child_family %}
-    <h4>Parents</h4>
-    <div class="row">
-    {% for somebody in person.child_family.spouses %}
-      <div class="col-sm-6">
-        {% include "person-card.html" %}
-      </div>
-    {% endfor %}
-    </div>
+    <!-- Born-to -->
+    {% if person.child_family %}
+      <h4>Parents</h4>
+      {% for somebody in person.child_family.spouses %}
+          {% include "person-card.html" %}
+      {% endfor %}
 
-    <!-- Siblings -->
-    {% if person.child_family.children.exists and not person.child_family.single_child == person %}
-      <h4>Siblings</h4>
-      <div class="row">
+      <!-- Siblings -->
+      {% if person.child_family.children.exists and not person.child_family.single_child == person %}
+        <h4>Siblings</h4>
         {% for somebody in person.child_family.ordered_children.iterator %}
             {% if not somebody == person %}
-              <div class="col-sm-6">
-                {% include "person-card.html" %}
-              </div>
+              {% include "person-card.html" %}
             {% endif %}
         {% endfor %}
-      </div>
-    {% endif %}
-  {% endif %}
-</div>
-
-{% for family in person.spousal_families.iterator %}
-<div class="section">
-  <h3>{% if family.kind = "MARR" %}Marital Family{% else %}Domestic Relationship{% endif %}</h3>
-  <div class="row">
-  {% for somebody in family.spouses %}
-      {% if not somebody == person %}
-        <div class="col-sm-6">
-          {% include "person-card.html" %}
-        </div>
       {% endif %}
-  {% endfor %}
-  </div>
-
-  <!-- Marital Facts -->
-  {% if family.joined.date or family.joined.place or family.separated.date %}
-  <hr />
-    {% if family.joined.date %}
-      <strong>{% if family.kind = "MARR" %}Married{% else %}Domestic Partners{% endif %}:</strong> {{ family.joined.date_string }}{% if family.joined.date_approxQ %} (approximate){% endif %}{% endif %}{% if family.joined.place %}<br />{{ family.joined.place }}{% endif %}
-    {% if family.separated.date %}
-      <strong>{% if family.kind = "MARR" %}Divorced{% else %}Separated{% endif %}:</strong> {{ family.separated.date_string }} {% if family.separated.date_approxQ %}(approximate){% endif %}
-      <br />
     {% endif %}
-    {% if family.separated.place %}
-      <strong>Place:</strong> {{ family.separated.place }}
-      <br /><br />
-    {% endif %}
-  <hr />
-  {% endif %}
+  </p>
 
-  {% if family.photos.exists %}
-    <h4>Family Photos:</h4>
-    <div class="photo-subsection row">
-    {% for photo in family.photos.iterator %}
-      <div class="col-xs-4 col-sm-3">
+  {% for family in person.spousal_families.iterator %}
+    <h3>{% if family.kind = "MARR" %}Marital Family{% else %}Domestic Relationship{% endif %}</h3>
+    <p>
+    {% for somebody in family.spouses %}
+      {% if not somebody == person %}
+        {% include "person-card.html" %}
+      {% endif %}
+    {% endfor %}
+
+    <!-- Marital Facts -->
+    {% if family.joined.date or family.joined.place or family.separated.date %}
+      {% if family.joined.date %}
+        <strong>{% if family.kind = "MARR" %}Married{% else %}Domestic Partners{% endif %}:</strong> {{ family.joined.date_string }}{% if family.joined.date_approxQ %} (approximate){% endif %}{% endif %}{% if family.joined.place %}<br />{{ family.joined.place }}{% endif %}
+      {% if family.separated.date %}
+        <strong>{% if family.kind = "MARR" %}Divorced{% else %}Separated{% endif %}:</strong> {{ family.separated.date_string }} {% if family.separated.date_approxQ %}(approximate){% endif %}
+        <br />
+      {% endif %}
+      {% if family.separated.place %}
+        <strong>Place:</strong> {{ family.separated.place }}
+        <br /><br />
+      {% endif %}
+    {% endif %}
+    </p>
+
+    {% if family.photos.exists %}
+      <h4>Family Photos</h4>
+      <p>
+      {% for photo in family.photos.iterator %}
         <a href="{{ photo.docfile.url }}">
           <!-- TODO: Fix hacks -->
           <img src="{{ photo.thumb.url }}" class="subsection-thumb img-rounded center-block clearfix visible-xs">
           <img src="{{ photo.thumb.url }}" class="sidebar-thumb img-rounded center-block clearfix hidden-xs">
         </a>
-      </div>
-    {% endfor %}
-    </div>
-    <hr />
-  {% endif %}
-
-  <!-- Children -->
-  {% if family.children.exists %}
-    <h4>Children:</h4>
-    <div class="row">
-    {% for somebody in family.ordered_children.iterator %}
-      <div class="col-sm-6">
-        {% include "person-card.html" %}
-      </div>
-    {% endfor %}
-    </div>
-  {% endif %}
-
-</div>
-{% endfor %}
-
-{% if posts.exists %}
-<div class="section">
-  <h3>Related blog posts:</h3>
-  {% for post in posts.iterator %}
-    <a href="/gedgo/blog/post/{{ post.id }}">{{ post.title }}</a>&nbsp; ({{ post.created }})<br>
-  {% endfor %}
-</div>
-{% endif %}
-
-{% if person.photos.exists %}
-<div class="section visible-xs">
-  <h3>Photos:</h3>
-  <div class="row">
-  {% for photo in person.photos %}
-      {% if not photo == person.key_photo %}
-        <div class="col-xs-4">
-          <a href="{{ photo.docfile.url }}">
-            <img src="{{ photo.thumb.url }}" class="subsection-thumb img-rounded center-block clearfix">
-          </a>
         </div>
-      {% endif %}
+      {% endfor %}
+      </p>
+    {% endif %}
+
+    <!-- Children -->
+    {% if family.children.exists %}
+      <h4>Children</h4>
+      <p>
+      {% for somebody in family.ordered_children.iterator %}
+        {% include "person-card.html" %}
+      {% endfor %}
+      </p>
+    {% endif %}
   {% endfor %}
+
+  {% if posts.exists %}
+    <h3>Related blog posts</h3>
+    <ul>
+    {% for post in posts.iterator %}
+      <li><a href="/gedgo/blog/post/{{ post.id }}">{{ post.title }}</a>({{ post.created }})</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if person.photos.exists %}
+    <h3>Photos</h3>
+    <p>
+    {% for photo in person.photos %}
+        {% if not photo == person.key_photo %}
+            <a href="{{ photo.docfile.url }}">
+              <img src="{{ photo.thumb.url }}" class="subsection-thumb img-rounded center-block clearfix">
+            </a>
+        {% endif %}
+    {% endfor %}
+    </p>
   </div>
+  {% endif %}
+
+  {% if person.documentaries %}
+    <h3>Documentaries</h3>
+    <ul>
+    {% for doc in person.documentaries %}
+        <li><a href="{{ doc.location }}">{{ doc.title }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if person.notes.exists %}
+    <h3>Notes</h3>
+    <p>
+    {% for note in person.notes.all %}
+        {{ note.text|linebreaks }}
+    {% endfor %}
+    </p>
+  {% endif %}
+
+  {% if person.documents %}
+    <h3>Documents</h3>
+    <ul>
+    {% for doc in person.documents %}
+        <li><a href="{{ doc.docfile.url }}">{{ doc.docfile.name }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if user.is_authenticated %}
+      {% include "comment_form.html" %}
+  {% endif %}
 </div>
-{% endif %}
 
-{% if person.documentaries %}
-<div class="section">
-  <h3>Documentaries:</h3>
-  {% for doc in person.documentaries %}
-      <a href="{{ doc.location }}">{{ doc.title }}</a><br>
-  {% endfor %}
-</div>
-{% endif %}
 
-{% if person.notes.exists %}
-<div class="section">
-  <h3>Notes:</h3>
-  {% for note in person.notes.all %}
-      {{ note.text|linebreaks }}
-  {% endfor %}
-</div>
-{% endif %}
-
-{% if person.documents %}
-<div class="section">
-  <h3>Documents:</h3>
-  {% for doc in person.documents %}
-      <a href="{{ doc.docfile.url }}">
-        <span class="glyphicon glyphicon-{{ doc.glyph }}"></span> &nbsp; {{ doc.docfile.name }}
-      </a><br>
-  {% endfor %}
-{% endif %}
-
-<div class="section hidden-xs" id="timeline-pod">
-    <h3>Timeline:</h3>
+<div id="rightsidecontent">
     <div id="timeline" data-gid="{{gedcom.id}}" data-pid="{{person.pointer}}"></div>
-</div>
-
-{% if person.child_family %}
-<div class="section hidden-xs">
-    <h3>Pedigree Chart:</h3>
-    <div id="pedigree-tree" data-gid="{{gedcom.id}}" data-pid="{{person.pointer}}"></div>
-</div>
-{% endif %}
-
-<div class="section">
-    {% include "comment_form.html" %}
 </div>
 
 {%endblock %}
 
+
+
+
 {% block javascript %}
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.0/d3.min.js"></script>
-  {% if person.child_family %}
-    <script src="{{ STATIC_URL }}js/pedigree.js"></script>
-  {% endif %}
+  <script src="{{ STATIC_URL }}js/pedigree.js"></script>
   <script src="{{ STATIC_URL }}js/timeline.js"></script>
 {% endblock %}

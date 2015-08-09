@@ -5,37 +5,45 @@
 {% endblock %}
 
 {% block leftsidebar %}
+    <h4>Documentaries</h4>
     {% if documentaries.exists %}
-    <div class="bs-sidebar hidden-print" role="complementary">
         <ul class="nav bs-sidenav">
         {% for documentary in documentaries %}
             <li><a href="#{{ documentary.title|urlencode }}">{{ documentary.title }}</a></li>
         {% endfor %}
         </ul>
-    </div>
+    {% else %}
+        <p class="insignificant">
+            No documentaries yet.  Check back soon.
+        </p>
     {% endif %}
-    <br />
 {% endblock %}
 
 
 {% block content %}
-{% if documentaries.exists %}
-    {% for documentary in documentaries.iterator %}
-        <div class="media">
-          <a class="pull-left" href="{{ documentary.location }}">
-            <img class="documentary-thumb media-object" src="{{ documentary.thumb.docfile.url }}">
-          </a>
-          <div class="media-body">
-            <h4 class="media-heading" id="{{ documentary.title|urlencode }}">{{ documentary.title }}</h4>
-            {{ documentary.description|linebreaks }}
-            Last updated: {{ documentary.last_updated }}
-          </div>
-        </div>
-    {% endfor %}
-{% else %}
-    <div class="pod">
-        No documentaries yet.  Check back soon.
+    <div id="primarycontent">
+        {% if documentaries.exists %}
+            {% for documentary in documentaries.iterator %}
+                {% if documentary.thumb %}
+                    <a href="{{ documentary.thumb.docfile.url }}">
+                      <img class="documentary-thumb" src="{{ documentary.thumb.docfile.url }}">
+                    </a>
+                {% endif %}
+                <h2 id="{{ documentary.title|urlencode }}">{{ documentary.title }}</h2>
+                <p>{{ documentary.description|linebreaks }}</p>
+                <p class="time">Last updated: {{ documentary.last_updated }}</p>
+                {% if user.is_staff %}
+                    <p class="admin edit"><a href="/admin/gedgo/documentary/{{ documentary.title|urlencode }}">Edit</a></p>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p class="insignificant">
+                No documentaries yet.  Check back soon.
+            </p>
+        {% endif %}
+        {% if user.is_staff %}
+            <p class="admin add"><a href="/admin/gedgo/documentary/add/">Add a documentary</a></p>
+        {% endif %}
     </div>
-{% endif %}
 {% endblock %}
 

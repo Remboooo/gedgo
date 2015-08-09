@@ -15,7 +15,7 @@ def blog(request, year, month):
     if year:
         posts = posts.filter(created__year=year)
     if month:
-        posts = posts.filter(created__month=month)
+        posts = posts#.filter(created__month=month)
 
     paginator = Paginator(posts, 2)
 
@@ -30,7 +30,7 @@ def blog(request, year, month):
         posts = paginator.page(paginator.num_pages)
 
     months = set(
-        (d.year, d.month, datetime(2012, d.month, 1).strftime('%B'))
+        (d.year, d.month, datetime(2015, d.month, 1).strftime('%B'))
         for d in BlogPost.objects.values_list('created', flat=True))
 
     return render(

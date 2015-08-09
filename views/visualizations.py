@@ -5,11 +5,13 @@ from django.http import HttpResponse
 from gedgo.models import Person
 from datetime import datetime
 from collections import defaultdict
+
+from gedgo.current_history import HISTORY as HISTORICAL
+
 import random
 import json
 
 
-@login_required
 def pedigree(request, gid, pid):
     person = get_object_or_404(Person, gedcom_id=gid, pointer=pid)
     n = _node(person, 0)
@@ -47,7 +49,6 @@ def _truncate(inp):
     return (inp[:25] + '..') if len(inp) > 27 else inp
 
 
-@login_required
 def timeline(request, gid, pid):
     """
     TODO:
@@ -131,7 +132,7 @@ def timeline(request, gid, pid):
             continue
         events.append({'text': text, 'year': year, 'type': 'historical'})
         # Keep historical events three years apart to keep from crowding.
-        open_years -= set([year - 2, year - 1, year, year + 1, year + 2])
+        open_years -= set([year - 1, year, year + 1])
         historical_count += 1
 
     response = {'start': start_date, 'end': end_date, 'events': events}
@@ -151,73 +152,3 @@ def __gatherby(inlist, func):
         d[func(item)].append(item)
     return d.values()
 
-# TODO: Switch to database storage?
-HISTORICAL = [
-    ['First Nobel Prizes awarded', 1901],
-    ['NYC subway opens', 1904],
-    ['Einstein proposes Theory of Relativity', 1905],
-    ['Picasso introduces Cubism', 1907],
-    ['Plastic invented', 1909],
-    ['Chinese Revolution', 1911],
-    ['Ford assembly line opens', 1913],
-    ['Panama Canal opens', 1914],
-    ['Battles of Somme, Verdun', 1916],
-    ['WWI ends', 1919],
-    ["Women's suffrage succeeds in US", 1920],
-    ['Tomb of King Tut discovered', 1922],
-    ['Roaring twenties in full swing', 1925],
-    ['Lindbergh flies solo over Atlantic', 1927],
-    ['Penicillin discovered', 1928],
-    ['US stock market crashes', 1929],
-    ['Pluto discovered', 1930],
-    ['Air conditioning invented', 1932],
-    ['US Prohibition ends', 1933],
-    ['The Dust Bowl', 1934],
-    ['US Social Security begun', 1935],
-    ['Spanish Civil War begins', 1936],
-    ['Hindenberg disaster', 1937],
-    ['WWII Begins', 1939],
-    ['Manhattan Project begins', 1941],
-    ['Stalingrad / Midway', 1942],
-    ['D-Day', 1944],
-    ['First computer built', 1945],
-    ['Sound barrier broken', 1947],
-    ['Big Bang theory established', 1948],
-    ['NATO established', 1949],
-    ['First Peanuts cartoon strip', 1950],
-    ['Color TV introduced', 1951],
-    ['Queen Elizabeth coronated', 1952],
-    ['DNA discovered', 1953],
-    ['Segregation ruled illegal', 1954],
-    ['Warsaw pact', 1955],
-    ['Sputnik launched', 1957],
-    ['First TV presidential debate', 1960],
-    ['Cuban missile crisis', 1962],
-    ['I Have a Dream speech', 1963],
-    ['US sends troops to Vietnam', 1965],
-    ['Summer of love', 1967],
-    ['Beatles release Let It Be', 1969],
-    ['VCRs introduced', 1971],
-    ['M*A*S*H premiers', 1972],
-    ['Watergate scandal hits', 1973],
-    ['Microsoft founded', 1975],
-    ['Steve Jobs invents Apple I', 1976],
-    ['Star Wars released', 1977],
-    ['John Paul II becomes Pope', 1978],
-    ['First space station launched', 1979],
-    ['John Lennon dies', 1980],
-    ['Space shuttle first orbital flight', 1981],
-    ['Sally Ride is first woman in space', 1983],
-    ['Wreck of the Titanic discovered', 1985],
-    ['Chernobyl disaster', 1986],
-    ['Berlin wall falls', 1989],
-    ['World Wide Web is invented', 1990],
-    ['Nelson Mandela elected', 1994],
-    ['South Africa repeals apartheid law', 1991],
-    ['Hong Kong transferred to China', 1997],
-    ['The Euro is introduced', 1999],
-    ['Wikipedia founded', 2001],
-    ['Human genome project completed', 2003],
-    ['Barack Obama sworn US President', 2009],
-    ['population reaches 7 billion', 2011]
-]

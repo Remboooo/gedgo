@@ -5,39 +5,37 @@
 {% endblock %}
 
 {% block leftsidebar %}
-{% if post.tagged_photos.all %}
-    {% for photo in post.tagged_photos.all %}
-      <a href="{{ photo.docfile.url }}">
-        <img src="{{ photo.thumb.url }}" class="sidebar-lead img-rounded">
-      </a>
-    {% endfor %}
-{% endif %}
+  <p class="back"><a href="{% url 'blog' %}">Back to the post list</a></p>
+  {% if post.tagged_photos.all %}
+      {% for photo in post.tagged_photos.all %}
+        <a href="{{ photo.docfile.url }}">
+          <img src="{{ photo.thumb.url }}" class="sidebar-lead img-rounded">
+        </a>
+      {% endfor %}
+  {% else %}
+    <p class="insignificant">No tagged photos in this post</p>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-  <h1>{{ post.title }}</h1>
-  <div class="body">{{ post.body|safe|linebreaks }}</div><br />
-  {% if user.is_staff %}
-      <a href="/admin/gedgo/blogpost/{{ post.id }}/"><span class="glyphicon glyphicon-pencil"></span> Edit this post</a>
-  {% endif %}
+  <div id="primarycontent">
+    <h2>{{ post.title }}</h2>
+    <p class="body">{{ post.body|safe|linebreaks }}</p>
+    <p class="time">{{ post.created }}</p>
+    {% if user.is_staff %}
+        <p class="admin edit"><a href="/admin/gedgo/blogpost/{{ post.id }}/">Edit</a></p>
+    {% endif %}
 
-  <div class="section">
-      Posted: {{ post.created }}<br>
-      <a href="/gedgo/blog/">Back to the post list</a>
-  </div>
-
-  {% if post.tagged_people.all %}
-  <div class="section">
-      <h3>People in this post:</h3>
+    {% if post.tagged_people.all %}
+      <h3>People in this post</h3>
       {% for somebody in post.tagged_people.all %}
         {% include "person-card.html" %}
         {% if forloop.last %}{% else %}<hr>{% endif %}
       {% endfor %}
-  </div>
-  {% endif %}
+    {% endif %}
 
-  <!-- Comments  -->
-  <div class="section">
+    <!-- Comments  -->
+    
     {% include "comment_form.html" %}
   </div>
 

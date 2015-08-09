@@ -22,34 +22,34 @@ urlpatterns = patterns(
     url(r'^(?P<gedcom_id>\d+)/$', views.gedcom, name='gedcom'),
 
     # XHR Data views
-    url(r'^(?P<gid>\d+)/pedigree/(?P<pid>I\d+)/$', views.pedigree),
-    url(r'^(?P<gid>\d+)/timeline/(?P<pid>I\d+)/$', views.timeline),
-    url(r'^dashboard/worker/status$', views.worker_status),
+    url(r'^(?P<gid>\d+)/pedigree/(?P<pid>I\d+)/$', views.pedigree, name='pedigree'),
+    url(r'^(?P<gid>\d+)/timeline/(?P<pid>I\d+)/$', views.timeline, name='timeline'),
+    url(r'^dashboard/worker/status$', views.worker_status, name='worker_status'),
 
-    url(r'^blog/$', views.blog_list),
-    url(r'^blog/(?P<year>\d+)/(?P<month>\d+)/$', views.blog),
-    url(r'^blog/post/(?P<post_id>\d+)/$', views.blogpost),
-    url(r'^documentaries/$', views.documentaries),
-    url(r'^research/(?P<pathname>.*)$', views.research),
-    url(r'^api/', include(v1_api.urls)),
-    url(r'^search/$', views.search),
-    url(r'^dashboard/$', views.dashboard),
-    url(r'^dashboard/user/(?P<user_id>\d+)/$', views.user_tracking),
+    url(r'^blog/$', views.blog_list, name='blog'),
+    url(r'^blog/(?P<year>\d+)/(?P<month>\d+)/$', views.blog, name='blogmonth'),
+    url(r'^blog/post/(?P<post_id>\d+)/$', views.blogpost, name='blogpost'),
+    url(r'^documentaries/$', views.documentaries, name='documentaries'),
+    url(r'^research/(?P<pathname>.*)$', views.research, name='research'),
+    url(r'^api/', include(v1_api.urls), name='api'),
+    url(r'^search/$', views.search, name='search'),
+    url(r'^dashboard/$', views.dashboard, name='dashboard'),
+    url(r'^dashboard/user/(?P<user_id>\d+)/$', views.user_tracking, name='user_tracking'),
 
     # Auth
-    url(r'^logout/$', views.logout_view),
+    url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^password_reset/$',
         'django.contrib.auth.views.password_reset',
         {
             'template_name': 'auth/login.html',
             'email_template_name': 'auth/password_reset_email.html',
             'post_reset_redirect': '/gedgo/password_reset/done/'
-        }),
+        }, name='password_reset'),
     url(r'^password_reset/done/$',
         'django.contrib.auth.views.password_reset_done',
         {
             'template_name': 'auth/password_reset_done.html'
-        }),
+        }, name='password_reset_done'),
     url(r'^password_reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
         'django.contrib.auth.views.password_reset_confirm',
         {

@@ -1,5 +1,5 @@
 body {
-  min-height: 100%;
+  background: #fcfcfc;
 }
 
 body:after {
@@ -27,6 +27,7 @@ html, body, input {
   margin: 0;
   padding: 0;
   height: 75px;
+  background: white;
 }
 
 #title {
@@ -38,6 +39,8 @@ html, body, input {
   background: url(/static/img/tree_extended.jpg) no-repeat;
   background-position: right 65%;
   background-size: cover;
+  position: relative;
+  z-index: 1;
 }
 
 #title .main {
@@ -49,6 +52,10 @@ html, body, input {
   font-weight: normal;
 }
 
+#title + #main {
+  min-height: calc(100vh - 300px - 75px);
+}
+
 @media (max-width: 768px) {
   #title {
     height: 150px;
@@ -57,6 +64,10 @@ html, body, input {
   #title .main {
     font-size: 75pt;
     padding: 15px 0 0 50px;
+  }
+
+  #title + #main {
+    min-height: calc(100vh - 150px - 75px);
   }
 }
 
@@ -69,8 +80,42 @@ html, body, input {
     font-size: 50pt;
     padding: 5px 0 0 10px;
   }
+
+  #title + #main {
+    min-height: calc(100vh - 100px - 75px);
+  }
 }
 
+/**********\
+ SMALL TITLE 
+\**********/
+
+
+#smalltitle {
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 50px;
+  position: relative;
+  background: url(/static/img/tree_extended.jpg) no-repeat;
+  background-position: right 60%;
+  background-size: cover;
+  z-index: 1;
+}
+
+#smalltitle .main {
+  display: block;
+  font-size: 25pt;
+  font-family: 'Rochester', cursive;
+  padding: 0 0 0 20px;
+  margin: 0;
+  font-weight: normal;
+}
+
+#smalltitle + #main {
+  min-height: calc(100vh - 102px);
+}
 
 
 /*********************\
@@ -154,8 +199,228 @@ input[type=search]::-webkit-input-placeholder {
 
 
 /**********\
+   CONTENT
+\**********/
+
+#main {
+  width: 100%;
+  display: flex;
+}
+
+#sidebar {
+  flex: 1;
+  order: 1;
+  width: 300px;
+  margin: 0;
+  border: 0;
+  padding: 10px 0 0 30px;
+}
+
+#content {
+  flex: 3;
+  order: 2;
+  display: flex;
+  width: calc(100% - 300px);
+  margin: 0;
+  border: 0;
+}
+
+#primarycontent {
+  flex: 1.5;
+  order: 1;
+  margin: 0;
+  background: white;
+  box-shadow: 0px 0px 50px #e8e8e8;
+  padding: 15px;
+}
+
+#rightsidecontent {
+  flex: 1;
+  order: 2;
+  margin: 0;
+  padding: 20px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  #content {
+    display: block;
+    background: white;
+    box-shadow: 0px 0px 50px #e8e8e8;
+  }
+
+  #primarycontent {
+    display: block;
+    width: calc(100% - 30px);
+    box-shadow: none;
+  }
+
+  #rightsidecontent {
+    display: block;
+    text-align: left;
+    width: calc(100% - 40px);
+    background: white;
+  }
+}
+
+@media (max-width: 640px) {
+  #main {
+    display: block;
+    min-height: 0;
+  }
+
+  #sidebar {
+    float: none;
+    width: 100%;
+  }
+
+  #content {
+    width: 100%;
+  }
+}
+
+p {
+  margin: 0;
+  padding: 10px;
+}
+
+.insignificant {
+  color: #b0b0b0;
+}
+
+.back {
+  padding: 20px 30px;
+}
+
+.back:before {
+  content: '◀';
+  color: #b0b0b0;
+  margin-right: 10px;
+}
+
+a:link {
+  color: #009ae1;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #009ae1;
+}
+
+h2 {
+  font-size: 35pt;
+  margin: 0;
+  color: rgba(98, 131, 152, 1);
+}
+
+h3 {
+  font-size: 25pt;
+  margin: 0;
+  color: rgba(98, 131, 152, 1);
+}
+
+h4 {
+  font-size: 15pt;
+  margin: 0;
+  color: rgba(98, 131, 152, 1);
+}
+
+#primarycontent h2 {
+  padding: 10px 0 0 40px;
+}
+
+#primarycontent h3 {
+  padding: 10px 0 0 40px;
+}
+
+#primarycontent h4 {
+  padding: 10px 0 0 25px;
+}
+
+ul {
+  padding: 10px;
+  margin: 0;
+}
+
+ul li {
+  list-style-type: none;
+}
+
+#main ul li:before {
+  content: '▷';
+  margin: 0 10px 0 0;
+  color: #808080;
+}
+
+#main input[type='submit'], input[type='button'] {
+  font-family: 'Open Sans', sans-serif;
+  text-transform: uppercase;
+  border: 0;
+  background: #425D69;
+  border-radius: 5px;
+  padding: 5px;
+  color: white;
+}
+
+#main input[type='submit']:hover, input[type='button']:hover {
+  background: #3E84A3;
+}
+
+#main textarea {
+  width: 100%;
+}
+
+#main input[type='submit'] {
+  float: right;
+}
+
+.add:before {
+  content: '+';
+  color: #808080;
+  display: inline-block;
+  width: 20px;
+}
+
+.edit:before {
+  content: '✐';
+  color: #808080;
+  display: inline-block;
+  width: 20px;
+}
+
+.time {
+  font-style: italic;
+  color: #808080;
+}
+
+#content img {
+  float: left;
+  margin: 10px;
+}
+
+
+/**********\
+    BLOG
+\**********/
+
+
+/**********\
     GEDGO
 \**********/
+
+
+
+.latestpost {
+
+}
+
+.family {
+
+}
+
+.postcomment {
+
+}
 
 .sidebar-thumb {
   width: 105px;
@@ -192,9 +457,6 @@ input[type=search]::-webkit-input-placeholder {
 .card-title {
   margin-top: 5px;
   margin-bottom: 2px;
-}
-.welcome {
-  text-align: center;
 }
 .help {
   font-size: 18px;
