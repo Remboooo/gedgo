@@ -173,6 +173,10 @@ form {
   border: 1px solid #a0a0a0;
 }
 
+input[type=search] {
+  outline: none;
+}
+
 
 .search input[type=search] {
   width: 15px;
