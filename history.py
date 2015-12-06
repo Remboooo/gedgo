@@ -10,7 +10,8 @@ sites = [
         ('http://en.wikipedia.org/wiki/Timeline_of_modern_history', True),
 ]
 
-event_regex = re.compile('^ *([0-9]{4})[^:]*: (.+)$')
+event_regex = re.compile('^ *([0-9]{4})[^:]*: (.+?)(\\[[0-9]+\\])?$')
+
 
 def scrape_events(site, sentence_per_event):
    soup = BeautifulSoup(urllib2.urlopen(site).read())

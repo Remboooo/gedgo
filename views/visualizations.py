@@ -3,13 +3,12 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 
 from gedgo.models import Person
-from datetime import datetime
+import datetime
 from collections import defaultdict
 
 from gedgo.current_history import HISTORY as HISTORICAL
 
 import random
-import time
 import json
 
 
@@ -23,7 +22,8 @@ def pedigree(request, gid, pid):
     )
 
 def _ts(date):
-    return time.mktime(date.timetuple())
+    delta = date - datetime.date(1970, 1, 1)
+    return delta.total_seconds()
 
 def _node(person, level):
     r = {}
@@ -62,7 +62,7 @@ def timeline(request, gid, pid):
       - Comments
     """
     person = get_object_or_404(Person, gedcom_id=gid, pointer=pid)
-    now = datetime.now()
+    now = datetime.datetime.now()
 
     # Don't show timelines for people without valid birth dates.
     if not valid_event_date(person.birth) and not valid_event_date(person.death):
@@ -133,7 +133,7 @@ def timeline(request, gid, pid):
             break
         if year not in open_years:
             continue
-        events.append({'text': text, 'year': year, 'type': 'historical', 'timestamp': _ts(datetime(year, 1, 1))})
+        events.append({'text': text, 'year': year, 'type': 'historical', 'timestamp': _ts(datetime.date(year, 1, 1))})
         # Keep historical events three years apart to keep from crowding.
         open_years -= set([year - 1, year, year + 1])
         historical_count += 1
