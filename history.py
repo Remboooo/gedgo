@@ -3,10 +3,10 @@ import re
 import urllib2
 
 sites = [
-#        ('http://en.wikipedia.org/wiki/16th_century', False),
-#        ('http://en.wikipedia.org/wiki/17th_century', False),
-#        ('http://en.wikipedia.org/wiki/18th_century', False),
-#        ('http://en.wikipedia.org/wiki/19th_century', False),
+        ('http://en.wikipedia.org/wiki/16th_century', False),
+        ('http://en.wikipedia.org/wiki/17th_century', False),
+        ('http://en.wikipedia.org/wiki/18th_century', False),
+        ('http://en.wikipedia.org/wiki/19th_century', False),
         ('http://en.wikipedia.org/wiki/Timeline_of_modern_history', True),
 ]
 
