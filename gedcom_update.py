@@ -6,6 +6,7 @@ from django.utils.datetime_safe import date
 from django.utils import timezone
 from django.conf import settings
 from datetime import datetime
+import re
 from re import findall
 from os import path, mkdir
 
@@ -34,7 +35,9 @@ def update(g, file_name, verbose=True):
             __process_Person(entry, g)
             person_counter += 1
         elif tag == 'FAM':
-            __process_Family(entry, g)
+            family = __process_Family(entry, g)
+            if family and family.pointer == 'F1':
+                g.key_families.add(family)
             family_counter += 1
         elif tag == 'NOTE':
             __process_Note(entry, g)
@@ -51,6 +54,7 @@ def update(g, file_name, verbose=True):
     __process_all_relations(g, parsed, verbose)
 
     g.last_updated = timezone.now()
+
     g.save()
 
 
@@ -191,6 +195,7 @@ def __process_Family(entry, g):
         __process_Document(m, f, g)
 
     f.save()
+    return f
 
 
 def __create_Event(entry, g, e):
@@ -277,22 +282,32 @@ def __process_Document(entry, obj, g):
 
 # --- Helper Functions
 def __check_unchanged(entry, g):
+    return False
     changed = __parse_gen_date(
         __child_value_by_tags(entry, ['CHAN', 'DATE'])
     )[0]
     return changed and g.last_updated and (changed <= g.last_updated)
 
 
+MONTHS = {
+'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+                    'maa': 3,           'mei': 5,                                         'okt': 10,
+         }
+
+def __get_month(s):
+    return MONTHS[s.lower()]
+
 DATE_FORMATS = [
-    ('%Y', '%Y'),
-    ('%d %b %Y', '%B %d, %Y'),
-    ('%b %Y', '%B, %Y')
+    (re.compile('^([0-9]{1,2}) ([A-Za-z]{3}) ([0-9]{4})$'), lambda m: (date(int(m.group(3)), __get_month(m.group(2)), int(m.group(1))), '%d %B %Y', None, False)),
+    (re.compile('^([A-Za-z]{3}) ([0-9]{4})$'), lambda m: (date(int(m.group(2)), __get_month(m.group(1)), 1), '%B %Y', None, False)),
+    (re.compile('^([0-9]{4})$'), lambda m: (date(int(m.group(1)), 1, 1), '%Y', None, False)),
+    (re.compile('^.*([0-9]{4}).*$'), lambda m: (date(int(m.group(1)), 1, 1), '%Y', None, True))
 ]
 
 
 # TODO: Clean up this dreadful function
 def __parse_gen_date(date_value):
-    if type(date_value) is not str or date_value == '':
+    if not date_value:
         return None, None, None, False
 
     date_value = date_value.strip(' ')
@@ -303,26 +318,16 @@ def __parse_gen_date(date_value):
         year, year_range_end = [int(y) for y in found[0]]
         return datetime(year, 1, 1), '%Y', year_range_end, False
 
-    # Parse dates.
-    found = findall(r'^(?:(ABT) +)?(.+)$', date_value)
-    if not found:
-        raise ValueError("Date string not understood: '%s'" % date_value)
-    approxQ, date_string = found[0]
-
-    # If 'ABT' is in the date_value, it's an approximate date.
-    approxQ = (len(approxQ) > 0)
-
     # Try to parse the date string.
     rdate = None
-    for parse_format, print_format in DATE_FORMATS:
+    for parser, transformer in DATE_FORMATS:
         try:
-            rdate = datetime.strptime(date_string, parse_format)
-            return (
-                date(rdate.year, rdate.month, rdate.day),
-                print_format, None, approxQ
-            )
-        except ValueError:
-            pass
+            match = parser.match(date_value)
+            if match:
+                result = transformer(match)
+                return result
+        except (ValueError, KeyError):
+            print("Parse error for '{}'".format(date_value))
     return None, None, None, False
 
 

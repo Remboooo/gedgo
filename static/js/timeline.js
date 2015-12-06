@@ -1,118 +1,210 @@
-var gid = d3.select("#timeline").attr("data-gid"),
-    pid = d3.select("#timeline").attr("data-pid");
+var gid = $("#timeline").attr("data-gid"),
+    pid = $("#timeline").attr("data-pid");
 
-function splitTwo(str) {
-  var words = str.split(" ");
-  var str1 = "", str2 = "";
-  str1 = words[0];
-  var i;
-  for (i = 1; i < words.length && str1.length < 35; i++) {
-    str1 += " " + words[i];
-  }
-  for (; i < words.length; i++) {
-    str2 += " " + words[i];
-  }
-  return [str1, str2];
+function capitalizeFirst(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-d3.json("/gedgo/" + gid + "/timeline/" + pid + "/", function(data) {
+function wordwrap(textnode, x, y, width, padding, linePadding) {
+	var x_pos = x,
+		y_pos = y,
+		boxwidth = width,
+		fz = parseInt(window.getComputedStyle(textnode)['font-size']);
+
+    var line_height = fz + linePadding;
+
+    var wrapping = textnode.cloneNode(false);
+    wrapping.setAttributeNS(null, 'x', x_pos + padding);
+    wrapping.setAttributeNS(null, 'y', y_pos + padding);
+
+    var testing = wrapping.cloneNode(false);
+    testing.setAttributeNS(null, 'visibility', 'hidden'); // Comment this out to debug
+
+    var testingTSPAN = document.createElementNS(null, 'tspan');
+    var testingTEXTNODE = document.createTextNode(textnode.textContent);
+    testingTSPAN.appendChild(testingTEXTNODE);
+
+    testing.appendChild(testingTSPAN);
+		var tester = document.getElementsByTagName('svg')[0].appendChild(testing);
+    
+    var words = textnode.textContent.split(" ");
+    var line = line2 = "";
+    var linecounter = 0;
+	var testwidth;
+
+    for (var n = 0; n < words.length; n++) {
+		line2 = line + words[n] + " ";
+		testing.textContent = line2;
+		testwidth = testing.getBBox().width;
+        if ((testwidth + 2*padding) > boxwidth) {
+            testingTSPAN = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+            testingTSPAN.setAttributeNS(null, 'x', x_pos + padding);
+            testingTSPAN.setAttributeNS(null, 'dy', line_height);
+            
+            testingTEXTNODE = document.createTextNode(line);
+            testingTSPAN.appendChild(testingTEXTNODE);
+            wrapping.appendChild(testingTSPAN);
+
+            line = words[n] + " ";
+            linecounter++;
+        } else {
+            line = line2;
+        }
+    }
+
+    var testingTSPAN = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    testingTSPAN.setAttributeNS(null, 'x', x_pos + padding);
+    testingTSPAN.setAttributeNS(null, 'dy', line_height);
+
+    var testingTEXTNODE = document.createTextNode(line);
+    testingTSPAN.appendChild(testingTEXTNODE);
+
+    wrapping.appendChild(testingTSPAN);
+
+	testing.parentNode.removeChild(testing);
+	textnode.parentNode.replaceChild(wrapping,textnode);
+
+	//return (linecounter+1) * line_height;
+	return wrapping;
+}
+
+$.getJSON("/gedgo/" + gid + "/timeline/" + pid + "/", function(data) {
   var events = data.events;
   if (events.length < 1) {
     $("#timeline-pod").remove();
   } else {
-    var birthyear = data.start,
-        deathyear = data.end,
-        hscale = d3.scale.linear()
-                    .domain([0, 35])
-                    .range([20, 650]);
+	var start = data.start,
+		end = data.end;
 
-    //Width and height
-    var w = 550,
-        h = hscale(deathyear - birthyear);
-        scale = d3.scale.linear()
-                  .domain([birthyear, deathyear])
-                  .range([30, h - 30]);
+	var hscale = function(timestamp) {
+		return 20 + 630 * (timestamp / (35 /* years */ * 31556926 /* seconds/year */));
+	}
 
-    // Create SVG element
-    var svg = d3.select("#timeline")
-       .append("svg:svg")
-       .attr("width", w)
-       .attr("height", h);
+    var w = 300,
+        h = hscale(end - start);
 
-    svg.selectAll("line")
-        .data([1])
-        .enter()
-        .append("line")
-        .attr("x1", w/2).attr("y1", 30)
-        .attr("x2", w/2).attr("y2", h - 30)
-        .attr("stroke", "teal");
+	var textLineDist = 35;
 
-    svg.selectAll("circle")
-        .data(events)
-        .enter()
-        .append("circle")
-        .attr("cx", w/2)
-        .attr("cy", function(d) {
-            return scale(d.year);
-        })
-        .attr("r", 5)
-        .attr("fill", function(d, i) {
-          return (d.year == birthyear || d.year == deathyear) ? "teal" : "white";
-        })
-        .attr("stroke-width", 3)
-        .attr("stroke", function(d, i) {
-          return (d.type == 'personal') ? "teal" : "orange";
-        });
+	var scale = function(timestamp) {
+		return 30 + (((timestamp - start) / (end - start)) * (h - 60));
+	}
 
-    var newNodes = svg.selectAll("text").data(events).enter();
-    
-    newNodes.append("text")
-        .text(function(d) {
-           return '' + d.year;
-          })
-        .attr("x", function(d, i) {
-            return (d.type == 'personal') ? w/2 - 15 : w/2 + 15;
-          })
-          .attr("y", function(d) {
-           return scale(d.year) + 5;
-          })
-          .attr("text-anchor", function(d,i) {
-            return (d.type == 'personal') ? "end" : "start";
-          })
-          .attr("font-size", "9pt")
-          .attr("fill", "black")
-          .attr("font-weight", "bold");
-        
-    newNodes.append("text")
-        .text(function(d) {
-           return splitTwo(d.text)[0];
-          })
-        .attr("x", function(d, i) {
-            return (d.type == 'personal') ? w/2 + 15 : w/2 - 15;
-          })
-          .attr("y", function(d) {
-           return scale(d.year) + 5;
-          })
-          .attr("text-anchor", function(d,i) {
-            return (d.type == 'personal') ? "start" : "end";
-          })
-          .attr("font-size", "9pt")
-          .attr("fill", "gray");    
-          
-    newNodes.append("text")
-        .text(function(d) {
-           return splitTwo(d.text)[1];
-          })
-        .attr("x", function(d, i) {
-            return (d.type == 'personal') ? w/2 + 20 : w/2 - 20;
-          })
-          .attr("y", function(d) {
-           return scale(d.year) + 20;
-          })
-          .attr("text-anchor", function(d,i) {
-            return (d.type == 'personal') ? "start" : "end";
-          })
-          .attr("font-size", "9pt")
-          .attr("fill", "gray");
+    var r = Raphael("timeline", w, h);
+
+	var lineX = w - 10;
+	r.path("M" + lineX + "," + 30 + "L" + lineX + "," + (h - 30))
+	 .attr({
+		       "stroke": "teal",
+			   "stroke-width": .5,
+	       });
+
+
+	var nodes = [];
+
+	events.sort(function(a, b) {return a.timestamp - b.timestamp;});
+
+	$(events).each(function (i, evt) {
+		var anchorY = scale(evt.timestamp);
+		var textColor = evt.type == "personal" ? "black" : "gray";
+		var t = r.text(lineX - textLineDist - 20, anchorY, capitalizeFirst(evt.text)).attr({
+			"text-anchor": "end",
+			"font-size": "14pt",
+			"color": textColor,
+		});
+		t.node = wordwrap(t.node, lineX - textLineDist - 20, anchorY, lineX - textLineDist - 20, 0, 0);
+		t.attr("y", anchorY);
+
+		var year = r.text(lineX - 28, anchorY, evt.year).attr({"font-size": "10pt", "text-anchor": "end"});
+
+		var anchor = r.set();
+
+		var nodeColor = evt.type == "personal" ? "orange" : "teal";
+
+		var outer = r.circle(lineX, anchorY, 7).attr({"fill": nodeColor, "stroke": "none"});
+		var inner = r.circle(lineX, anchorY, 4).attr({"fill": "white", "stroke": "none"});
+		anchor.push(outer, inner);
+
+		var node = r.set();
+		node.push(t, year);
+		
+		nodes.push({"anchor": anchor, "node": node, "text": evt.text});
+	});
+
+	console.log(nodes);
+
+	var overlap = function(a, b, margin) {
+		aBox = a.getBBox();
+		bBox = b.getBBox();
+		if (bBox.y < aBox.y2 + margin) {
+			return (aBox.y2 + margin) - bBox.y;
+		} else {
+			return 0;
+		}
+	};
+
+	var moveIterations = 0;
+	var somethingMoved = false;
+
+	do {
+		somethingMoved = false;
+		for (var i = 0; i < nodes.length - 1; i++) {
+			var first = nodes[i].node;
+			var second = nodes[i+1].node;
+			var firstHeight = first.getBBox().height/2;
+			var firstY = first.getBBox().y + firstHeight;
+			var secondHeight = second.getBBox().height/2;
+			var secondY = second.getBBox().y + secondHeight;
+			var overlapY = overlap(first, second, 10);
+			if (overlapY > 0) {
+				var newFirstY = Math.max(20 + firstHeight, firstY - overlapY*.5 - 1);
+				var firstYDelta = firstY - newFirstY;
+				var newSecondY = Math.min(h - secondHeight - 20, secondY + overlapY*.5 + 1);
+				var secondYDelta = secondY - newSecondY;
+
+				var deltaDelta = secondYDelta + firstYDelta;
+
+				if (deltaDelta > 0) {
+					// Second node bumping into the bottom; add some delta to first node going up
+					newFirstY -= deltaDelta;
+				}
+				if (deltaDelta < 0) {
+					// First node bumping into the top; add some delta to second node going down
+					newSecondY -= deltaDelta;
+				}
+
+				first.attr("y", newFirstY);
+				second.attr("y", newSecondY);
+
+				// WTFBBQ fix: objects don't actually end up where we want them to, there's some kind of offset.
+				// So find out what that offset is, and correct for it.
+
+				var firstActualY = first.getBBox().y + first.getBBox().height/2;
+				first.attr("y", newFirstY + (newFirstY - firstActualY));
+
+				var secondActualY = second.getBBox().y + second.getBBox().height/2;
+				second.attr("y", newSecondY + (newSecondY - secondActualY));
+
+				somethingMoved = true;
+			}
+		}
+	} while (somethingMoved && ++moveIterations < 100);
+
+	// Draw some lines
+	for (var i = 0; i < nodes.length - 1; i++) {
+		var anchor = nodes[i].anchor;
+		var anchorY = anchor.getBBox().y + anchor.getBBox().height/2;
+		
+		var node = nodes[i].node;
+		var nodeY = node.getBBox().y + node.getBBox().height/2;
+
+		if (Math.abs(nodeY - anchorY) > 5) {
+			r.path("M" + (lineX - textLineDist + 10) + "," + nodeY + "L" + (lineX) + "," + anchorY)
+			 .attr({
+						"stroke": "rgb(.1, .1, .1)",
+						"stroke-width": ".25px",
+					})
+			.toBack();
+		}
+	}
   }
 });

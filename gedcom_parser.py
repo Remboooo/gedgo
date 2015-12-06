@@ -1,5 +1,24 @@
 import re
+import codecs
+import os
 
+class FilePeeker():
+    def __init__(self, f):
+        self.f = f
+        self.nextline = None
+
+    def peekline(self):
+        if not self.nextline:
+            self.nextline = self.f.readline()
+        return self.nextline
+
+    def readline(self):
+        if self.nextline:
+            line = self.nextline
+            self.nextline = None
+            return line
+        else:
+            return self.f.readline()
 
 class GedcomParser(object):
     """
@@ -18,20 +37,31 @@ class GedcomParser(object):
 
     def __init__(self, file_name_or_stream):
         if isinstance(file_name_or_stream, basestring):
-            self.file = open(file_name_or_stream, 'rU')
+            bs = min(32, os.path.getsize(file_name_or_stream))
+            f = open(file_name_or_stream, 'rb')
+            raw = f.read(bs)
+            f.close()
+            if raw.startswith(codecs.BOM_UTF8):
+                encoding = 'utf-8-sig'
+                print("UTF8 with BOM")
+            else:
+                result = chardet.detect(raw)
+                encoding = result['encoding']
+                print("Not UTF8")
+            self.file = codecs.open(file_name_or_stream, mode='r', encoding=encoding, errors='ignore')
         else:
             self.file = file_name_or_stream
+        self.file = FilePeeker(self.file)
         self.__parse()
 
     def __parse(self):
         self.entries = {}
 
-        while True:
-            line = self.file.readline()
-            if not line:
-                break
-            tag, entry = self.__parse_element(line)
-            if 'pointer' in entry:
+        cont = True
+
+        while cont:
+            cont, tag, entry = self.__parse_element()
+            if entry and 'pointer' in entry:
                 pointer = entry['pointer']
                 self.entries[pointer] = entry
             elif tag == 'HEAD':
@@ -39,13 +69,16 @@ class GedcomParser(object):
             elif tag == 'TRLR':
                 self.trailer = entry
 
-    def __parse_element(self, line):
-        parsed = self.line_re.findall(line.strip())
+    def __parse_element(self):
+        line = self.file.readline()
+        if not line:
+            return False, None, None
+        parsed = self.line_re.match(line.strip())
 
         if not parsed:
             raise SyntaxError("Bad GEDCOM syntax in line: '%s'" % line)
 
-        level, pointer, tag, value = parsed[0]
+        level, pointer, tag, value = parsed.groups()
 
         entry = {
             "tag": tag,
@@ -59,14 +92,12 @@ class GedcomParser(object):
         # Consume lines from the file while the level of the next line is
         # deeper than that of the current element, and recurse down.
         while True:
-            current_position = self.file.tell()
-            next_line = self.file.readline()
+            next_line = self.file.peekline()
 
-            if next_line and int(next_line[:2]) > level:
-                _, child_element = self.__parse_element(next_line)
+            if next_line and int(next_line[0:2]) > level:
+                _, _, child_element = self.__parse_element()
                 entry['children'].append(child_element)
             else:
-                self.file.seek(current_position)
                 break
 
         # Keep the entry trimmed down
@@ -74,7 +105,7 @@ class GedcomParser(object):
             if not entry[key]:
                 del entry[key]
 
-        return tag, entry
+        return True, tag, entry
 
     def __unicode__(self):
         return "Gedcom file (%s)" % self.file

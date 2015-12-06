@@ -1,8 +1,8 @@
-<div class="card row">
-  <div class="col-xs-5">
+<div class="card">
+  <div class="photo">
     <a href="/gedgo/{{ somebody.gedcom.id }}/{{ somebody.pointer }}/"><img src="{% if somebody.photos %}{{ MEDIA_URL }}thumbs/{{ somebody.key_photo }}{% else %}{{ STATIC_URL }}img/generic_person.gif{% endif %}" class="thumb img-rounded"></a>
   </div>
-  <div class="card-content col-xs-7">
+  <div class="card-content">
     <h4 class="card-title"><a href="/gedgo/{{ somebody.gedcom.id }}/{{ somebody.pointer }}/">{{ somebody.full_name }}</a></h4>
     ({{ somebody.year_range }})
   </div>

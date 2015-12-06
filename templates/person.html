@@ -22,8 +22,6 @@
   </a>
   <h2>{{ person.full_name }}</h2><h3>({{ person.year_range }})</h3></td>
 
-  <!-- Basic information pod -->
-  <h3>Biographical Information</h3>
   <p>
     {% if person.birth or person.death or person.education or person.religion %}
         {% if person.birth.date %}
@@ -152,7 +150,7 @@
     </ul>
   {% endif %}
 
-  {% if person.notes.exists %}
+  {% if false and person.notes.exists %}
     <h3>Notes</h3>
     <p>
     {% for note in person.notes.all %}
@@ -187,6 +185,7 @@
 
 {% block javascript %}
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.0/d3.min.js"></script>
-  <script src="{{ STATIC_URL }}js/pedigree.js"></script>
-  <script src="{{ STATIC_URL }}js/timeline.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/raphael-min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/pedigree.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/timeline.js"></script>
 {% endblock %}

@@ -9,6 +9,7 @@ from collections import defaultdict
 from gedgo.current_history import HISTORY as HISTORICAL
 
 import random
+import time
 import json
 
 
@@ -21,10 +22,13 @@ def pedigree(request, gid, pid):
         content_type="application/json"
     )
 
+def _ts(date):
+    return time.mktime(date.timetuple())
 
 def _node(person, level):
     r = {}
-    r['name'] = _truncate(person.full_name)
+    r['first_name'] = person.first_name
+    r['last_name'] = person.last_name
     r['span'] = '(%s)' % person.year_range
     r['id'] = person.pointer
     if (level < 2) and person.child_family:
@@ -37,10 +41,10 @@ def _node(person, level):
                 r['children'].append(_node(parent, level + 1))
         while len(r['children']) < 2:
             if person.child_family.husbands.all():
-                r['children'].append({'name': 'unknown', 'span': '', 'id': ''})
+                r['children'].append({'first_name': '', 'last_name': '', 'span': '', 'id': ''})
             else:
                 r['children'] = [
-                    {'name': 'unknown', 'span': '', 'id': ''}
+                        {'first_name': '', 'last_name': '', 'span': '', 'id': ''}
                 ] + r['children']
     return r
 
@@ -58,19 +62,18 @@ def timeline(request, gid, pid):
       - Comments
     """
     person = get_object_or_404(Person, gedcom_id=gid, pointer=pid)
-    now = datetime.now().year
+    now = datetime.now()
 
     # Don't show timelines for people without valid birth dates.
-    if not valid_event_date(person.birth) or \
-            (not valid_event_date(person.death) and
-             (now - person.birth.date.year > 100)):
+    if not valid_event_date(person.birth) and not valid_event_date(person.death):
         return HttpResponse('{"events": []}', content_type="application/json")
 
-    start_date = person.birth.date.year
+    start_date = person.birth.date
     events = [
         {
             'text': 'born',
-            'year': start_date,
+            'year': start_date.year,
+            'timestamp': _ts(start_date),
             'type': 'personal'
         }
     ]
@@ -81,12 +84,14 @@ def timeline(request, gid, pid):
                 events.append({
                     'text': 'married',
                     'year': family.joined.date.year,
+                    'timestamp': _ts(family.joined.date),
                     'type': 'personal'
                 })
             if valid_event_date(family.separated):
                 events.append({
                     'text': 'divorced',
                     'year': family.separated.date.year,
+                    'timestamp': _ts(family.separated.date),
                     'type': 'personal'
                 })
             for child in family.children.iterator():
@@ -94,6 +99,7 @@ def timeline(request, gid, pid):
                     events.append({
                         'text': child.full_name + " born",
                         'year': child.birth.date.year,
+                        'timestamp': _ts(child.birth.date),
                         'type': 'personal'
                     })
                 if valid_event_date(child.death):
@@ -101,27 +107,24 @@ def timeline(request, gid, pid):
                         events.append({
                             'name': child.full_name + " died",
                             'year': child.death.date.year,
+                            'timestamp': _ts(child.death.date),
                             'type': 'personal'
                         })
 
     if not valid_event_date(person.death):
         end_date = now
-        events.append({'text': 'now', 'year': now, 'type': 'personal'})
+        events.append({'text': 'now', 'year': now.year, 'type': 'personal', 'timestamp': _ts(now)})
     else:
-        end_date = person.death.date.year
-        events.append({'text': 'died', 'year': end_date, 'type': 'personal'})
-
-    # Don't show timelines for people with only birth & end_date.
-    if len(events) < 3:
-        return HttpResponse('{"events": []}', content_type="application/json")
+        end_date = person.death.date
+        events.append({'text': 'died', 'year': person.death.date.year, 'type': 'personal', 'timestamp': _ts(person.death.date)})
 
     # open_years is an set of years where historical events may be added into
     # the timeline, to prevent overcrowding of items
-    open_years = set(range(start_date + 1, end_date))
+    open_years = set(range(start_date.year + 1, end_date.year))
     for e in events:
         open_years -= set([e['year'] - 1, e['year'], e['year'] + 1])
 
-    number_allowed = max(((end_date - start_date) / 3) + 2 - len(events), 5)
+    number_allowed = max(((end_date.year - start_date.year) / 3) + 2 - len(events), 5)
 
     historical_count = 0
     random.shuffle(HISTORICAL)
@@ -130,12 +133,12 @@ def timeline(request, gid, pid):
             break
         if year not in open_years:
             continue
-        events.append({'text': text, 'year': year, 'type': 'historical'})
+        events.append({'text': text, 'year': year, 'type': 'historical', 'timestamp': _ts(datetime(year, 1, 1))})
         # Keep historical events three years apart to keep from crowding.
         open_years -= set([year - 1, year, year + 1])
         historical_count += 1
 
-    response = {'start': start_date, 'end': end_date, 'events': events}
+    response = {'start': _ts(start_date), 'end': _ts(end_date), 'events': events}
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 

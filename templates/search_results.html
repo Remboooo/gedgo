@@ -7,13 +7,13 @@
 
 {% block content %}
 {% if people or posts %}
+<ol class="search-results">
   {% for somebody in people %}
-  <div class="row">
-    <div class="col-sm-6">
-      {% include "person-card.html" %}
-    </div>
-  </div>
+  <li class="search-result">
+    {% include "person-card.html" %}
+  </li>
   {% endfor %}
+</ol>
 {% else %}
     <p>No people matched your search criteria.<br><i>{{ query }}</i></p>
 {% endif %}

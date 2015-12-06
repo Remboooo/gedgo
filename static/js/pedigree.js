@@ -6,9 +6,9 @@ d3.json("/gedgo/" + gid + "/pedigree/" + pid + "/", function(treeData) {
   // Create a svg canvas
   var vis = d3.select("#pedigree-tree").append("svg:svg")
     .attr("width", 500)
-    .attr("height", 1000)
+    .attr("height", 750)
     .append("svg:g")
-    .attr("transform", "translate(40, -100)");
+    .attr("transform", "translate(20, -90)");
 
   // Create a tree "canvas"
   var gid = treeData.gid;
@@ -35,32 +35,41 @@ d3.json("/gedgo/" + gid + "/pedigree/" + pid + "/", function(treeData) {
     .attr("transform", function(d) {
         return "translate(" + d.y + "," + d.x + ")"; });
 
-  // Add the dot at every node
   node.append("svg:rect")
     .attr("rx", 10)
     .attr("ry", 10)
-    .attr("y", -30)
+    .attr("y", -35)
     .attr("x", -20)
-    .attr("width", 200)
-    .attr("height", 50);
+    .attr("width", 1000)
+    .attr("height", 60);
 
-  // place the name atribute left or right depending if children
   node.append("svg:a")
     .attr("xlink:href", function(d) { return "/gedgo/" + gid + "/" + d.id; })
     .append("text")
     .attr("dx", -10)
-    .attr("dy", -10)
+    .attr("dy", -18)
     .attr("text-anchor", "start")
-    .text(function(d) { return d.name; })
-    .attr("font-family", "Baskerville")
+    .text(function(d) { return d.first_name; })
+    .attr("font-family", "sans-serif")
     .attr("font-size", "11pt");
+
+  node.append("svg:a")
+    .attr("xlink:href", function(d) { return "/gedgo/" + gid + "/" + d.id; })
+    .append("text")
+    .attr("dx", -10)
+    .attr("dy", 0)
+    .attr("text-anchor", "start")
+    .text(function(d) { return d.last_name; })
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "11pt");
+
 
   node.append("svg:text")
     .attr("dx", -10)
-    .attr("dy", 8)
+    .attr("dy", 18)
     .attr("text-anchor", "start")
     .text(function(d) { return d.span; })
-    .attr("font-family", "Baskerville")
+    .attr("font-family", "sans-serif")
     .attr("font-size", "11pt")
     .attr("fill", "gray");
 });

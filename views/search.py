@@ -10,7 +10,6 @@ import re
 TERMS_RE = re.compile('\w+')
 
 
-@login_required
 def search(request):
     g = Gedcom.objects.first()
     context = {

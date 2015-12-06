@@ -9,6 +9,7 @@ from gedgo.gedcom_update import update
 from os import path
 from sys import exc_info
 import traceback
+from traceback import print_exc
 
 from datetime import datetime
 
@@ -52,6 +53,7 @@ class Command(BaseCommand):
             try:
                 update(g, file_name)
             except:
+                print_exc()
                 e = exc_info()[0]
                 errstr = 'There was an error: %s\n%s' % (
                     e, traceback.format_exc())

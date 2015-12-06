@@ -308,33 +308,34 @@ a:visited {
 }
 
 h2 {
-  font-size: 35pt;
+  font-size: 20pt;
   margin: 0;
   color: rgba(98, 131, 152, 1);
 }
 
 h3 {
-  font-size: 25pt;
+  font-size: 16pt;
   margin: 0;
   color: rgba(98, 131, 152, 1);
 }
 
 h4 {
-  font-size: 15pt;
+  font-size: 13pt;
   margin: 0;
   color: rgba(98, 131, 152, 1);
+  clear: both;
 }
 
 #primarycontent h2 {
-  padding: 10px 0 0 40px;
+  padding: 0px 0 0 10px;
 }
 
 #primarycontent h3 {
-  padding: 10px 0 0 40px;
+  padding: 30px 0 0 10px;
 }
 
 #primarycontent h4 {
-  padding: 10px 0 0 25px;
+  padding: 20px 0 0 25px;
 }
 
 ul {
@@ -398,6 +399,10 @@ ul li {
   margin: 10px;
 }
 
+.search-result {
+	width: 100%;
+}
+
 
 /**********\
     BLOG
@@ -442,7 +447,7 @@ ul li {
   margin-bottom: 10px;
 }
 .thumb {
-  width: 100%;
+  width: 64px;
   margin-bottom: 10px;
 }
 .comment-area {
@@ -450,6 +455,9 @@ ul li {
 }
 .card {
   margin-bottom: 5px;
+  clear: both;
+  display: block;
+  width: 100%;
 }
 .card-content {
   margin-left: -15px;
@@ -457,6 +465,7 @@ ul li {
 .card-title {
   margin-top: 5px;
   margin-bottom: 2px;
+  clear: none;
 }
 .help {
   font-size: 18px;
@@ -464,9 +473,10 @@ ul li {
 
 rect {
   fill: white;
-  stroke: teal;
-  stroke-width: 2;
+  stroke: #e8e8e8;
+  stroke-width: 1;
 }
+
 path {
   fill: none;
   stroke: gray;
