@@ -111,7 +111,7 @@ $.getJSON("/gedgo/" + gid + "/timeline/" + pid + "/", function(data) {
 			"font-size": "14pt",
 			"color": textColor,
 		});
-		t.node = wordwrap(t.node, lineX - textLineDist - 20, anchorY, lineX - textLineDist - 20, 0, 0);
+		t.node = wordwrap(t.node, lineX - textLineDist - 20, anchorY, lineX - textLineDist - 25, 0, 0);
 		t.attr("y", anchorY);
 
 		var year = r.text(lineX - 28, anchorY, evt.year).attr({"font-size": "10pt", "text-anchor": "end"});
@@ -129,8 +129,6 @@ $.getJSON("/gedgo/" + gid + "/timeline/" + pid + "/", function(data) {
 		
 		nodes.push({"anchor": anchor, "node": node, "text": evt.text});
 	});
-
-	console.log(nodes);
 
 	var overlap = function(a, b, margin) {
 		aBox = a.getBBox();

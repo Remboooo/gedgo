@@ -33,6 +33,8 @@ urlpatterns = patterns(
     url(r'^research/(?P<pathname>.*)$', views.research, name='research'),
     url(r'^api/', include(v1_api.urls), name='api'),
     url(r'^search/$', views.search, name='search'),
+    url(r'^list/$', views.people_list, name='people_list'),
+    url(r'^list/data/$', views.PeopleListJson.as_view(), name='people_list_json'),
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^dashboard/user/(?P<user_id>\d+)/$', views.user_tracking, name='user_tracking'),
 

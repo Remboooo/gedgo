@@ -140,12 +140,12 @@ form {
   padding: 0;
 }
 
-input::-webkit-search-decoration,
-input::-webkit-search-cancel-button {
+.search input::-webkit-search-decoration,
+.search input::-webkit-search-cancel-button {
   display: none; 
 }
 
-input[type=search] {
+.search input[type=search] {
   background: url(/static/img/search.svg) no-repeat 5px center;
   background-size: 25px;
   margin-top: 7px;
@@ -168,32 +168,32 @@ input[type=search] {
   transition: all .2s;
 }
 
-input[type=search]:focus {
+.search input[type=search]:focus {
   width: 130px;
   border: 1px solid #a0a0a0;
 }
 
 
-input[type=search] {
+.search input[type=search] {
   width: 15px;
   padding-left: 10px;
   color: transparent;
   cursor: pointer;
 }
-input[type=search]:hover {
+.search input[type=search]:hover {
   background-color: #fff;
 }
-input[type=search]:focus {
+.search input[type=search]:focus {
   width: 130px;
   padding-left: 32px;
   color: #000;
   background-color: #fff;
   cursor: auto;
 }
-input[type=search]:-moz-placeholder {
+.search input[type=search]:-moz-placeholder {
   color: transparent;
 }
-input[type=search]::-webkit-input-placeholder {
+.search input[type=search]::-webkit-input-placeholder {
   color: transparent;
 }
 

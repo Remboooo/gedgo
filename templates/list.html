@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+	if (!jQuery.fn.dataTable) {
+		document.write('<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTables.min.js">\x3C/script>');
+		document.write('<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/jquery.dataTables.css" />');
+	} else {
+		document.write('<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css" />');
+	}
+
+	$(document).ready(function() {
+        var table = $('#people').DataTable({
+			processing: true,
+        	serverSide: true,
+        	lengthChange: false,
+        	pageLength: 25,
+        	ajax: "{% url 'people_list_json' %}",
+        	"oLanguage": {
+              "sSearch": "Filter: "
+            },
+            "oSearch": {
+              "sSearch": {{ search_json }},
+            },
+            "columnDefs" : [
+                {"class" : "dateCol", width: "100px", "targets": [2, 3]},
+            ],
+		});
+
+		$("#people tbody").on("click", "tr", function(event){
+            var id = table.row(this).data()[4];
+            window.location.href = "/gedgo/{{ gedcom.id }}/" + id + "/";
+        });
+	});
+</script>
+<style type="text/css">
+	#people_wrapper {
+		width: 100%;
+        margin-top: 20px;
+	}
+
+    #people_filter input[type='search'] {
+        padding: 5px 5px;
+        border-radius: 10px;
+        border: 1px solid #888;
+        width: 200px;
+        margin-right: 20px;
+    }
+
+    #people tbody tr {
+        cursor: pointer;
+    }
+
+    #people .dateCol {
+        text-align: right;
+        width: 150px;
+    }
+</style>
+
+
+<table id="people" class="display" width="100%">
+	<thead>
+		<tr>
+			<th>Last name</th>
+			<th>First name</th>
+			<th>Birth</th>
+			<th>Death</th>
+		</tr>
+	</thead>
+</table>
+
+{% endblock %}

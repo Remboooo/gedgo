@@ -2,7 +2,11 @@
 
 {% block leftsidebar %}
     You searched for: <strong>{{ query }}</strong><br>
+	{% if people or posts %}
     Found {% if people %}{{ people|length }} person{{ people|pluralize }}{% endif %}{% if posts %}{% if people %}, and {% endif %}{{ posts|length }} blog post{{ posts|pluralize }}{% endif %}.
+	{% else %}
+	Nothing found.
+	{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -15,6 +19,6 @@
   {% endfor %}
 </ol>
 {% else %}
-    <p>No people matched your search criteria.<br><i>{{ query }}</i></p>
+    <p>No people matched your search.</p>
 {% endif %}
 {% endblock %}
