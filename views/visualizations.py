@@ -21,9 +21,13 @@ def pedigree(request, gid, pid):
         content_type="application/json"
     )
 
+
 def _ts(date):
-    delta = date - datetime.date(1970, 1, 1)
+    if not isinstance(date, datetime.datetime):
+        date = datetime.datetime(date.year, date.month, date.day)
+    delta = date - datetime.datetime(1970, 1, 1)
     return delta.total_seconds()
+
 
 def _node(person, level):
     r = {}
@@ -133,7 +137,7 @@ def timeline(request, gid, pid):
             break
         if year not in open_years:
             continue
-        events.append({'text': text, 'year': year, 'type': 'historical', 'timestamp': _ts(datetime.date(year, 1, 1))})
+        events.append({'text': text, 'year': year, 'type': 'historical', 'timestamp': _ts(datetime.datetime(year, 1, 1))})
         # Keep historical events three years apart to keep from crowding.
         open_years -= set([year - 1, year, year + 1])
         historical_count += 1

@@ -45,9 +45,9 @@ class PeopleListJson(BaseDatatableView):
     def filter_queryset(self, qs):
         # use parameters passed in GET request to filter queryset
 
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            qs = qs.filter(Q(last_name__icontains=search) | Q(first_name__icontains=search))
+        search = self.request.GET.get(u'search[value]', "")
+        for term in search.split():
+            qs = qs.filter(Q(last_name__icontains=term) | Q(first_name__icontains=term))
 
         return qs
 
