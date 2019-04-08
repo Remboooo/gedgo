@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
