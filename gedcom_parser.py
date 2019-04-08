@@ -31,7 +31,7 @@ class GedcomParser(object):
     line_re = re.compile(
         '^(\d{1,2})' +          # Level
         '(?: @([A-Z\d]+)@)?' +  # Pointer, optional
-        ' _?([A-Z_\d]{3,})' +   # Tag
+        ' _?([A-Z\d]{3,})' +    # Tag
         '(?: (.+))?$'           # Value, optional
     )
 
