@@ -44,9 +44,9 @@ def update(g, file_name, verbose=True):
             note_counter += 1
 
     if verbose:
-        print('Found %d people, %d families, %d notes, and %d documents' % (
+        print(('Found %d people, %d families, %d notes, and %d documents' % (
             person_counter, family_counter, note_counter,
-            Document.objects.count()))
+            Document.objects.count())))
 
     if verbose:
         print('Creating ForeignKey links')
@@ -253,7 +253,7 @@ def __process_Document(entry, obj, g):
             make_thumbnail(path.join(settings.MEDIA_ROOT, file_name))
             thumb = path.join('thumbs', file_name)
         except:
-            print('  Warning: failed to make or find thumbnail: ' + file_name)
+            print(('  Warning: failed to make or find thumbnail: ' + file_name))
             return None  # Bail on document creation if thumb fails
 
     else:

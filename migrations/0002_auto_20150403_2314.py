@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='documentary',
             name='thumb',
-            field=models.ForeignKey(related_name='documentaries_thumb', blank=True, to='gedgo.Document', null=True),
+            field=models.ForeignKey(related_name='documentaries_thumb', blank=True, to='gedgo.Document', null=True, on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
     ]

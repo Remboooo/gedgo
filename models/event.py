@@ -12,7 +12,7 @@ class Event(models.Model):
     year_range_end = models.IntegerField(null=True)
     date_format = models.CharField(null=True, max_length=10)
     date_approxQ = models.BooleanField('Date is approximate')
-    gedcom = models.ForeignKey('Gedcom')
+    gedcom = models.ForeignKey('Gedcom', on_delete=models.DO_NOTHING)
     place = models.CharField(max_length=256)
 
     # Breaks strict MVC conventions.

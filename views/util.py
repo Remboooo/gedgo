@@ -8,7 +8,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib import messages
-from django.shortcuts import render_to_response
+from django.shortcuts import render as shortcuts_render
 from django.template import RequestContext
 
 from gedgo.models import BlogPost, Documentary
@@ -67,10 +67,10 @@ def process_comments(request, noun):
 
 
 def render(request, template, context):
-    return render_to_response(
+    return shortcuts_render(
+        request,
         template,
         context,
-        context_instance=RequestContext(request, site_context(request))
     )
 
 

@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('pointer', models.CharField(max_length=10, serialize=False, primary_key=True)),
                 ('text', models.TextField()),
-                ('gedcom', models.ForeignKey(to='gedgo.Gedcom')),
+                ('gedcom', models.ForeignKey(to='gedgo.Gedcom', on_delete=models.DO_NOTHING)),
             ],
             options={
             },
@@ -110,10 +110,10 @@ class Migration(migrations.Migration):
                 ('suffix', models.CharField(max_length=255)),
                 ('education', models.TextField(null=True)),
                 ('religion', models.CharField(max_length=255, null=True, blank=True)),
-                ('birth', models.ForeignKey(related_name='person_birth', blank=True, to='gedgo.Event', null=True)),
-                ('child_family', models.ForeignKey(related_name='person_child_family', blank=True, to='gedgo.Family', null=True)),
-                ('death', models.ForeignKey(related_name='person_death', blank=True, to='gedgo.Event', null=True)),
-                ('gedcom', models.ForeignKey(to='gedgo.Gedcom')),
+                ('birth', models.ForeignKey(related_name='person_birth', blank=True, to='gedgo.Event', null=True, on_delete=models.DO_NOTHING)),
+                ('child_family', models.ForeignKey(related_name='person_child_family', blank=True, to='gedgo.Family', null=True, on_delete=models.DO_NOTHING)),
+                ('death', models.ForeignKey(related_name='person_death', blank=True, to='gedgo.Event', null=True, on_delete=models.DO_NOTHING)),
+                ('gedcom', models.ForeignKey(to='gedgo.Gedcom', on_delete=models.DO_NOTHING)),
                 ('notes', models.ManyToManyField(to='gedgo.Note', null=True)),
                 ('profile', models.ManyToManyField(to='gedgo.Document', null=True, blank=True)),
                 ('spousal_families', models.ManyToManyField(related_name='person_spousal_families', to='gedgo.Family')),
@@ -138,7 +138,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='family',
             name='gedcom',
-            field=models.ForeignKey(to='gedgo.Gedcom'),
+            field=models.ForeignKey(to='gedgo.Gedcom', on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='family',
             name='joined',
-            field=models.ForeignKey(related_name='family_joined', blank=True, to='gedgo.Event', null=True),
+            field=models.ForeignKey(related_name='family_joined', blank=True, to='gedgo.Event', null=True, on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -162,7 +162,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='family',
             name='separated',
-            field=models.ForeignKey(related_name='family_separated', blank=True, to='gedgo.Event', null=True),
+            field=models.ForeignKey(related_name='family_separated', blank=True, to='gedgo.Event', null=True, on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -174,13 +174,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='gedcom',
-            field=models.ForeignKey(to='gedgo.Gedcom'),
+            field=models.ForeignKey(to='gedgo.Gedcom', on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='documentary',
             name='gedcom',
-            field=models.ForeignKey(to='gedgo.Gedcom'),
+            field=models.ForeignKey(to='gedgo.Gedcom', on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -198,13 +198,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='documentary',
             name='thumb',
-            field=models.ForeignKey(related_name='documentaries_thumb', blank=True, to='gedgo.Document'),
+            field=models.ForeignKey(related_name='documentaries_thumb', blank=True, to='gedgo.Document', on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='document',
             name='gedcom',
-            field=models.ForeignKey(blank=True, to='gedgo.Gedcom', null=True),
+            field=models.ForeignKey(blank=True, to='gedgo.Gedcom', null=True, on_delete=models.DO_NOTHING),
             preserve_default=True,
         ),
         migrations.AddField(

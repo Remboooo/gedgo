@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.conf.urls import include
 from django.shortcuts import redirect
 from tastypie.api import Api
@@ -7,13 +7,14 @@ from gedgo.api import PersonResource, FamilyResource
 from gedgo import views
 
 import settings
+import django.contrib.auth.views
+import django.views.static
 
 v1_api = Api(api_name='v1')
 v1_api.register(PersonResource())
 v1_api.register(FamilyResource())
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(
         r'^(?P<gedcom_id>\d+)/(?P<person_id>I\d+)/$',
         views.person,
@@ -41,36 +42,39 @@ urlpatterns = patterns(
     # Auth
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^password_reset/$',
-        'django.contrib.auth.views.password_reset',
+        django.contrib.auth.views.PasswordResetView.as_view(),
         {
             'template_name': 'auth/login.html',
             'email_template_name': 'auth/password_reset_email.html',
             'post_reset_redirect': '/gedgo/password_reset/done/'
         }, name='password_reset'),
     url(r'^password_reset/done/$',
-        'django.contrib.auth.views.password_reset_done',
+        django.contrib.auth.views.PasswordResetDoneView.as_view(),
         {
             'template_name': 'auth/password_reset_done.html'
         }, name='password_reset_done'),
-    url(r'^password_reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
-        'django.contrib.auth.views.password_reset_confirm',
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+        django.contrib.auth.views.PasswordResetConfirmView.as_view(),
         {
             'post_reset_redirect': '/',
             'template_name': 'auth/password_reset_confirm.html'
         }),
-
-        url(r'^$', lambda r: redirect('/gedgo/1/')),
-)
+    url(r'^reset/done/', django.contrib.auth.views.PasswordResetCompleteView.as_view(),
+        {
+            'template_name' : 'auth/password_reset_complete.html'
+        }, name='password_reset_complete'),
+    url(r'^$', lambda r: redirect('/gedgo/1/')),
+]
 
 # Backup media fileserve view
 if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', django.views.static.serve, {
             'document_root': settings.MEDIA_ROOT,
         }),
-        url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
+        url(r'^static/(?P<path>.*)$', django.views.static.serve, {
             'document_root': settings.STATIC_ROOT,
         }),
-)
+    ]
 
 

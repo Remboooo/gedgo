@@ -7,7 +7,7 @@ class Note(models.Model):
     pointer = models.CharField(max_length=10, primary_key=True)
 
     text = models.TextField()
-    gedcom = models.ForeignKey('Gedcom')
+    gedcom = models.ForeignKey('Gedcom', on_delete=models.DO_NOTHING)
 
     def __unicode__(self):
         return 'Note (%s)' % self.pointer

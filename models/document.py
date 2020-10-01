@@ -10,7 +10,7 @@ class Document(models.Model):
     description = models.TextField(null=True, blank=True)
     docfile = models.FileField(upload_to='uploaded')
     last_updated = models.DateTimeField(auto_now_add=True)
-    gedcom = models.ForeignKey('Gedcom', null=True, blank=True)
+    gedcom = models.ForeignKey('Gedcom', null=True, blank=True, on_delete=models.DO_NOTHING)
     thumb = models.FileField(upload_to='uploaded/thumbs',
                              null=True, blank=True)
 

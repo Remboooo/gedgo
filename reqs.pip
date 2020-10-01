@@ -3,8 +3,9 @@ django-celery
 South
 django-tastypie
 pillow
-mysql-python
+mysql
 redis
 flake8
 mock
 requests
+django_datatables_view

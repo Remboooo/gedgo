@@ -10,7 +10,7 @@ class Person(models.Model):
         app_label = 'gedgo'
         verbose_name_plural = 'People'
     pointer = models.CharField(max_length=10, primary_key=True)
-    gedcom = models.ForeignKey('Gedcom')
+    gedcom = models.ForeignKey('Gedcom', on_delete=models.DO_NOTHING)
 
     # Name
     first_name = models.CharField(max_length=255)
@@ -27,13 +27,15 @@ class Person(models.Model):
         'Event',
         related_name='person_birth',
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.DO_NOTHING,
     )
     death = models.ForeignKey(
         'Event',
         related_name='person_death',
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.DO_NOTHING,
     )
 
     # Family
@@ -41,7 +43,8 @@ class Person(models.Model):
         'Family',
         related_name='person_child_family',
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.DO_NOTHING,
     )
     spousal_families = models.ManyToManyField(
         'Family',

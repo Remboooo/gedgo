@@ -34,4 +34,4 @@ class Gedcom(models.Model):
     @property
     def photo_sample(self):
         photos = Document.objects.filter(gedcom=self, kind='PHOTO')
-        return random.sample(photos, min(20, len(photos)))
+        return random.sample(list(photos), min(20, len(photos)))
