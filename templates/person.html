@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block leftsidebar %}
@@ -18,7 +19,7 @@
 {% block content %}
 <div id="primarycontent">
   <a href="{% if person.photos %}{{ MEDIA_URL }}{{ person.key_photo }}{% else %}#{% endif %}">
-      <img src="{% if person.photos %}{{ MEDIA_URL }}thumbs/{{ person.key_photo }}{% else %}{{ STATIC_URL }}img/generic_person.gif{% endif %}" class="thumb img-rounded">
+	  <img src="{% if person.photos %}{{ MEDIA_URL }}thumbs/{{ person.key_photo }}{% else %}{% static "img/generic_person.gif" %}{% endif %}" class="thumb img-rounded">
   </a>
   <h2>{{ person.full_name }}</h2><h3>({{ person.year_range }})</h3></td>
 
@@ -70,7 +71,7 @@
   </p>
 
   {% for family in person.spousal_families.iterator %}
-    <h3>{% if family.kind = "MARR" %}Marital Family{% else %}Domestic Relationship{% endif %}</h3>
+    <h3>{% if family.kind == "MARR" %}Marital Family{% else %}Domestic Relationship{% endif %}</h3>
     <p>
     {% for somebody in family.spouses %}
       {% if not somebody == person %}
@@ -81,9 +82,9 @@
     <!-- Marital Facts -->
     {% if family.joined.date or family.joined.place or family.separated.date %}
       {% if family.joined.date %}
-        <strong>{% if family.kind = "MARR" %}Married{% else %}Domestic Partners{% endif %}:</strong> {{ family.joined.date_string }}{% if family.joined.date_approxQ %} (approximate){% endif %}{% endif %}{% if family.joined.place %}<br />{{ family.joined.place }}{% endif %}
+        <strong>{% if family.kind == "MARR" %}Married{% else %}Domestic Partners{% endif %}:</strong> {{ family.joined.date_string }}{% if family.joined.date_approxQ %} (approximate){% endif %}{% endif %}{% if family.joined.place %}<br />{{ family.joined.place }}{% endif %}
       {% if family.separated.date %}
-        <strong>{% if family.kind = "MARR" %}Divorced{% else %}Separated{% endif %}:</strong> {{ family.separated.date_string }} {% if family.separated.date_approxQ %}(approximate){% endif %}
+        <strong>{% if family.kind == "MARR" %}Divorced{% else %}Separated{% endif %}:</strong> {{ family.separated.date_string }} {% if family.separated.date_approxQ %}(approximate){% endif %}
         <br />
       {% endif %}
       {% if family.separated.place %}
@@ -185,7 +186,7 @@
 
 {% block javascript %}
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.0/d3.min.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/raphael-min.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/pedigree.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/timeline.js"></script>
+	<script type="text/javascript" src="{% static "js/raphael-min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/pedigree.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/timeline.js" %}"></script>
 {% endblock %}

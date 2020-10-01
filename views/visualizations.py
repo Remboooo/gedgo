@@ -69,15 +69,16 @@ def timeline(request, gid, pid):
     now = datetime.datetime.now()
 
     # Don't show timelines for people without valid birth dates.
-    if not valid_event_date(person.birth) and not valid_event_date(person.death):
+    if not valid_event_date(person.birth) or not valid_event_date(person.death):
         return HttpResponse('{"events": []}', content_type="application/json")
 
     start_date = person.birth.date
+
     events = [
         {
             'text': 'born',
-            'year': start_date.year,
-            'timestamp': _ts(start_date),
+            'year': person.birth.date.year,
+            'timestamp': _ts(person.birth.date),
             'type': 'personal'
         }
     ]
@@ -147,10 +148,7 @@ def timeline(request, gid, pid):
 
 
 def valid_event_date(event):
-    if event is not None:
-        if event.date is not None:
-            return True
-    return False
+    return event is not None and event.date is not None and event.date.year is not None
 
 
 def __gatherby(inlist, func):

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,7 +14,7 @@
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ STATIC_URL }}styles/style-login.css" rel="stylesheet">
+    <link href="{% static "styles/style-login.css" %}" rel="stylesheet">
   </head>
 
   <body>

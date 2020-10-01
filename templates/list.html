@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block main %}
 
 <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
 <script type="text/javascript">
 	if (!jQuery.fn.dataTable) {
-		document.write('<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTables.min.js">\x3C/script>');
-		document.write('<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/jquery.dataTables.css" />');
+		document.write('<script type="text/javascript" src="{% static "js/jquery.dataTables.min.js" %}">\x3C/script>');
+			document.write('<link rel="stylesheet" type="text/css" href="{% static "styles/jquery.dataTables.css" %}" />');
 	} else {
 		document.write('<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css" />');
 	}
