@@ -12,20 +12,22 @@
 
 {% block content %}
 <div id="primarycontent">
-  <h2>Welcome!</h2>
+  <h2>{% if gedcom.title %}{{ gedcom.title|safe }}{% else %}Welcome!{% endif %}</h2>
 
   {% if gedcom.description %}
-    {{ gedcom.description|safe|linebreaks }}
+    <p>{{ gedcom.description|safe|linebreaks }}</p>
   {% endif %}
 
   {% if gedcom.file_name or gedcom.last_update %}
+    <p class="gedcom-info">
     {% if gedcom.last_updated %}
-      <div class="pod-title">Last Updated:</div>{{ gedcom.last_updated }}
+      Last Updated: {{ gedcom.last_updated }}
     {% endif %}
     <br><br>
     {% if user.is_staff %}
       <a href="/admin/gedgo/gedcom/{{ gedcom.id }}/">Edit this page</a>
     {% endif %}
+    </p>
   {% endif %}
   {% if user.is_authenticated %}
     {% include "comment_form.html" %}

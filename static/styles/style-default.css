@@ -509,3 +509,9 @@ path {
 #worker-status span {
   margin-top: 10px;
 }
+
+.gedcom-info {
+  color: gray;
+  font-size: .75rem;
+}
+
