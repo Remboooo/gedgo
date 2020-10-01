@@ -157,5 +157,5 @@ def __gatherby(inlist, func):
     d = defaultdict(list)
     for item in inlist:
         d[func(item)].append(item)
-    return d.values()
+    return list(d.values())
 

@@ -1,5 +1,5 @@
-from gedcom_parser import GedcomParser
-from models import Gedcom, Person, Family, Note, Document, Event
+from .gedcom_parser import GedcomParser
+from .models import Gedcom, Person, Family, Note, Document, Event
 
 from django.db import transaction
 from django.utils.datetime_safe import date
@@ -16,7 +16,7 @@ from PIL import Image
 @transaction.atomic
 def update(g, file_name, verbose=True):
     if verbose:
-        print 'Parsing content'
+        print('Parsing content')
     parsed = GedcomParser(file_name)
 
     if g is None:
@@ -26,9 +26,9 @@ def update(g, file_name, verbose=True):
         )
 
     if verbose:
-        print 'Importing entries to models'
+        print('Importing entries to models')
     person_counter = family_counter = note_counter = 0
-    for entry in parsed.entries.values():
+    for entry in list(parsed.entries.values()):
         tag = entry['tag']
 
         if tag == 'INDI':
@@ -44,12 +44,12 @@ def update(g, file_name, verbose=True):
             note_counter += 1
 
     if verbose:
-        print 'Found %d people, %d families, %d notes, and %d documents' % (
+        print('Found %d people, %d families, %d notes, and %d documents' % (
             person_counter, family_counter, note_counter,
-            Document.objects.count())
+            Document.objects.count()))
 
     if verbose:
-        print 'Creating ForeignKey links'
+        print('Creating ForeignKey links')
 
     __process_all_relations(g, parsed, verbose)
 
@@ -61,7 +61,7 @@ def update(g, file_name, verbose=True):
 #--- Second Level script functions
 def __process_all_relations(gedcom, parsed, verbose=True):
     if verbose:
-        print '  Starting Person objects.'
+        print('  Starting Person objects.')
 
     # Process Person objects
     for person in gedcom.person_set.iterator():
@@ -71,7 +71,7 @@ def __process_all_relations(gedcom, parsed, verbose=True):
         else:
             person.delete()
     if verbose:
-        print '  Finished Person objects, starting Family objects.'
+        print('  Finished Person objects, starting Family objects.')
 
     # Process Family objects
     for family in gedcom.family_set.iterator():
@@ -82,7 +82,7 @@ def __process_all_relations(gedcom, parsed, verbose=True):
         else:
             family.delete()
     if verbose:
-        print '  Finished Family objects.'
+        print('  Finished Family objects.')
 
 
 def __process_person_relations(gedcom, person, entry):
@@ -253,13 +253,13 @@ def __process_Document(entry, obj, g):
             make_thumbnail(path.join(settings.MEDIA_ROOT, file_name))
             thumb = path.join('thumbs', file_name)
         except:
-            print '  Warning: failed to make or find thumbnail: ' + file_name
+            print('  Warning: failed to make or find thumbnail: ' + file_name)
             return None  # Bail on document creation if thumb fails
 
     else:
         thumb = None
 
-    known = Document.objects.filter(docfile=unicode(file_name))
+    known = Document.objects.filter(docfile=str(file_name))
 
     if len(known) > 0:
         m = known[0]
@@ -327,7 +327,7 @@ def __parse_gen_date(date_value):
                 result = transformer(match)
                 return result
         except (ValueError, KeyError):
-            print("Parse error for '{}'".format(date_value))
+            print(("Parse error for '{}'".format(date_value)))
     return None, None, None, False
 
 
@@ -340,7 +340,7 @@ def __objects_from_entry_tag(qset, entry, tag):
 
 
 def __child_value_by_tags(entry, tags, default=None):
-    if isinstance(tags, basestring):
+    if isinstance(tags, str):
         tags = [tags]
     tags.reverse()
     next = entry
@@ -362,7 +362,7 @@ def __valid_document_entry(e):
     file_name = __child_value_by_tags(e, 'FILE')
     img_presence = path.join(settings.MEDIA_ROOT, path.basename(file_name))
 
-    return isinstance(file_name, basestring) and file_name and \
+    return isinstance(file_name, str) and file_name and \
         path.exists(img_presence)
 
 

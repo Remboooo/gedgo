@@ -36,7 +36,7 @@ class GedcomParser(object):
     )
 
     def __init__(self, file_name_or_stream):
-        if isinstance(file_name_or_stream, basestring):
+        if isinstance(file_name_or_stream, str):
             bs = min(32, os.path.getsize(file_name_or_stream))
             f = open(file_name_or_stream, 'rb')
             raw = f.read(bs)
@@ -101,7 +101,7 @@ class GedcomParser(object):
                 break
 
         # Keep the entry trimmed down
-        for key in entry.keys():
+        for key in list(entry.keys()):
             if not entry[key]:
                 del entry[key]
 

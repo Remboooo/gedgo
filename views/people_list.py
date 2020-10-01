@@ -14,7 +14,7 @@ def get_date(o):
 
 def people_list(request):
     g = Gedcom.objects.first()
-    search = request.GET.get(u'q', '')
+    search = request.GET.get('q', '')
 
     context = {
         'gedcom': g,
@@ -45,7 +45,7 @@ class PeopleListJson(BaseDatatableView):
     def filter_queryset(self, qs):
         # use parameters passed in GET request to filter queryset
 
-        search = self.request.GET.get(u'search[value]', "")
+        search = self.request.GET.get('search[value]', "")
         for term in search.split():
             qs = qs.filter(Q(last_name__icontains=term) | Q(first_name__icontains=term))
 

@@ -1,7 +1,7 @@
 from django.db import models
 import random
 
-from document import Document
+from .document import Document
 
 
 class Gedcom(models.Model):

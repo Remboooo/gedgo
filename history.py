@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 sites = [
         ('http://en.wikipedia.org/wiki/16th_century', False),
@@ -14,7 +14,7 @@ event_regex = re.compile('^ *([0-9]{4})[^:]*: (.+?)(\\[[0-9]+\\])?$')
 
 
 def scrape_events(site, sentence_per_event):
-   soup = BeautifulSoup(urllib2.urlopen(site).read())
+   soup = BeautifulSoup(urllib.request.urlopen(site).read())
    text = soup.get_text()
    for line in text.splitlines():
        match = event_regex.match(line)
@@ -37,4 +37,4 @@ def scrape_events(site, sentence_per_event):
 
 
 if __name__ == '__main__':
-    print('HISTORY = ['+',\n'.join([repr(event) for site, sentence_per_event in sites for event in scrape_events(site, sentence_per_event) if len(event[0]) <= 50])+']')
+    print(('HISTORY = ['+',\n'.join([repr(event) for site, sentence_per_event in sites for event in scrape_events(site, sentence_per_event) if len(event[0]) <= 50])+']'))

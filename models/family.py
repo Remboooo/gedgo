@@ -1,7 +1,7 @@
 from django.db import models
 
-from document import Document
-from documentary import Documentary
+from .document import Document
+from .documentary import Documentary
 
 
 class Family(models.Model):

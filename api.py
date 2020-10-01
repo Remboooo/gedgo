@@ -12,7 +12,7 @@ def add_photos(f):
         photos = bundle.obj.photos()
         if not photos:
             return bundle
-        images = map(lambda i: i.docfile.url, photos)
+        images = [i.docfile.url for i in photos]
         bundle.data['images'] = images
         return bundle
     return wrapper

@@ -1,5 +1,5 @@
 
-from __future__ import absolute_import
+
 
 from gedgo.gedcom_update import update
 from gedgo import REDIS

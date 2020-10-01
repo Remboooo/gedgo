@@ -84,7 +84,7 @@ def site_context(request):
     show_documentaries = Documentary.objects.exists()
     show_researchfiles = isinstance(
         getattr(settings, 'RESEARCH_FILES_ROOT', None),
-        basestring
+        str
     )
     show_file_uploads = getattr(
         settings, 'GEDGO_ALLOW_FILE_UPLOADS', True) is True
